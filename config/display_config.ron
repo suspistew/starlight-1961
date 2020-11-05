@@ -1,0 +1,5 @@
+(
+  title: "Noom under the moon",
+  dimensions: Some((800, 600)),
+  resizable: false,
+)
