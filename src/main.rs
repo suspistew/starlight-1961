@@ -1,3 +1,7 @@
+mod states;
+mod entities;
+mod systems;
+
 use amethyst::{
     core::transform::TransformBundle,
     input::{InputBundle, StringBindings},
@@ -10,9 +14,8 @@ use amethyst::{
     ui::{RenderUi, UiBundle},
     utils::application_root_dir,
 };
-
-pub struct MyState;
-impl SimpleState for MyState {}
+use crate::states::level::LevelState;
+use crate::systems::ship_systems::ShipSystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -33,13 +36,18 @@ fn main() -> amethyst::Result<()> {
             RenderingBundle::<DefaultBackend>::new()
                 .with_plugin(
                     RenderToWindow::from_config_path(display_config)?
-                        .with_clear([0.058, 0.219, 0.058, 1.]),
+                        .with_clear([0.0, 0., 0.0, 1.]),
                 )
                 .with_plugin(RenderUi::default())
                 .with_plugin(RenderFlat2D::default()),
-        )?;
+        )?
+        .with(
+            ShipSystem,
+            "ship_system",
+            &["input_system"],
+        );;
 
-    let mut game = Application::new(resources, MyState, game_data)?;
+    let mut game = Application::new(resources, LevelState, game_data)?;
     game.run();
 
     Ok(())
