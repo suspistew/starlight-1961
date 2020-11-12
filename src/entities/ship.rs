@@ -3,7 +3,7 @@ use rand::Rng;
 
 pub struct ShipParent;
 
-impl Component for Ship {
+impl Component for ShipParent {
     type Storage = DenseVecStorage<Self>;
 }
 
@@ -32,9 +32,7 @@ impl Ship {
 
     pub fn sprite_nb(&mut self) -> usize {
         if self.power == 0 {self.last_sprite= 0;  return 0 }
-        if self.power > 0 && self.power <= 5 { self.last_sprite= 1; return 1}
-        if self.power > 5 && self.power <= 15 { self.last_sprite= 2; return 2}
-        rand::thread_rng().gen_range(3, 5) as usize
+        rand::thread_rng().gen_range(1, 4) as usize
     }
 }
 

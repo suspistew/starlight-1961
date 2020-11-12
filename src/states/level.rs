@@ -9,10 +9,10 @@ use std::fs::File;
 use serde_json::from_reader;
 use serde::Deserialize;
 use std::collections::HashMap;
-use crate::entities::ship::Ship;
+use crate::entities::ship::{Ship, ShipParent};
 
-pub const SCREEN_HEIGHT: f32 = 288.0;
-pub const SCREEN_WIDTH: f32 = 352.0;
+pub const SCREEN_HEIGHT: f32 = 576.0;
+pub const SCREEN_WIDTH: f32 = 704.0;
 pub const NO_TILE_ID: i32 = -1;
 pub const TILE_SIZE: f32 = 32.0;
 
@@ -32,8 +32,8 @@ impl SimpleState for LevelState {
         let ship_spritesheet_handle = load_ship_spritesheet(world);
 
         initialize_layer(world, &level, misc_spritesheet_handle.clone(), "background", 0.01);
-        initialize_layer(world, &level, misc_spritesheet_handle.clone(), "structure", 0.03);
-        initialize_layer(world, &level, misc_spritesheet_handle.clone(), "entities", 0.05);
+        initialize_layer(world, &level, misc_spritesheet_handle.clone(), "structures", 0.05);
+        initialize_layer(world, &level, misc_spritesheet_handle.clone(), "entities", 0.03);
 
         let ship = initialize_ship(world, &level, ship_spritesheet_handle);
 
@@ -127,14 +127,23 @@ fn initialize_ship(
     transform.set_translation_xyz(
         level.start_x as f32 * TILE_SIZE,
         ((level.height - level.start_y) as f32 * TILE_SIZE) - 26.,
-        0.07,
+        0.04,
     );
+
+    let parent = world
+        .create_entity()
+        .with(ShipParent)
+        .with(transform)
+        .build();
+    let mut transform_ship = Transform::default();
     world
         .create_entity()
         .with(sprite_render)
         .with(Ship::new(0., 0., 0., level.start_x as f32 * TILE_SIZE, ((level.height - level.start_y) as f32 * TILE_SIZE) - 26.))
-        .with(transform)
-        .build()
+        .with(transform_ship)
+        .with(Parent { entity: parent })
+        .build();
+    parent
 }
 
 pub fn initialize_camera(world: &mut World, level_config: &LevelConfig, ship: Entity) {
