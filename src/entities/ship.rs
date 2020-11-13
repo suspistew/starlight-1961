@@ -1,5 +1,5 @@
 use amethyst::ecs::prelude::{Component, DenseVecStorage};
-use rand::Rng;
+
 
 pub struct ShipParent;
 

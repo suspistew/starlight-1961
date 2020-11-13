@@ -1,6 +1,6 @@
 use crate::utils::Point2D;
 use amethyst::core::ecs::{Component, DenseVecStorage};
-use geo::{Polygon, CoordinateType, LineString};
+use geo::{Polygon, LineString};
 
 pub struct Transparent;
 
