@@ -11,8 +11,8 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use crate::entities::ship::{Ship, ShipParent, Thrusters};
 use crate::resources::ship_resource::ShipResource;
-use crate::utils::sprite_to_colliders::sprite_to_colliders;
-use crate::entities::collision::Transparent;
+use crate::utils::sprite_to_colliders::{sprite_to_colliders, is_landing_platform_start};
+use crate::entities::collision::{Transparent, LandingPlatform};
 
 pub const SCREEN_HEIGHT: f32 = 576.0;
 pub const SCREEN_WIDTH: f32 = 704.0;
@@ -77,6 +77,9 @@ fn initialize_layer(
     layer_position: f32,
 ) {
     match level.layers.get(layer) {
+        None => {
+            println!("Impossible to find the layer {} in the level config", layer);
+        }
         Some(sprites) => {
             let lines: Vec<_> = sprites.split(',').collect();
             for y in 0..level.height {
@@ -102,21 +105,19 @@ fn initialize_layer(
                             layer_position,
                         );
 
-                        let collider = sprite_to_colliders((tile_number - 1) as usize, tile_x as f32 * TILE_SIZE, tile_y as f32 * TILE_SIZE);
 
                         let mut builder = world
                             .create_entity()
                             .with(sprite_render)
                             .with(transform);
 
+                        let collider = sprite_to_colliders((tile_number - 1) as usize, tile_x as f32 * TILE_SIZE, tile_y as f32 * TILE_SIZE);
                         if collider.is_some() { builder = builder.with(collider.unwrap()); }
+                        if is_landing_platform_start((tile_number - 1) as usize) { builder = builder.with(LandingPlatform); }
                         builder.build();
                     }
                 }
             }
-        }
-        None => {
-            println!("Impossible to find the layer {} in the level config", layer);
         }
     };
 }

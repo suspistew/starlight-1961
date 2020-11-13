@@ -39,10 +39,18 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
             let right_collider = Collider::new(Point2D { x: pos_x + 24., y: pos_y }, 8., -32.);
             return Some(Colliders::from_vec(vec![bottom_collider, right_collider]));
         },
+        LANDING_PLATFORM => {
+            let platform_collider = Collider::new(Point2D { x: pos_x, y: pos_y }, 64., -32.);
+            return Some(Colliders::from_vec(vec![platform_collider]));
+        }
         _ => {}
     };
 
     None
+}
+
+pub fn is_landing_platform_start(sprite_nb: usize) -> bool{
+    sprite_nb == LANDING_PLATFORM
 }
 
 
@@ -54,3 +62,5 @@ const RIGHT_WALL: usize = 42;
 const BOTTOM_LEFT_WALL: usize = 50;
 const BOTTOM_WALL: usize = 51;
 const BOTTOM_RIGHT_WALL: usize = 52;
+
+const LANDING_PLATFORM: usize = 90;
