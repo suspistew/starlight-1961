@@ -2,6 +2,12 @@ use crate::utils::Point2D;
 use amethyst::core::ecs::{Component, DenseVecStorage};
 use geo::{Polygon, CoordinateType, LineString};
 
+pub struct LandingPlatform;
+
+impl Component for LandingPlatform {
+    type Storage = DenseVecStorage<Self>;
+}
+
 pub struct Transparent;
 
 impl Component for Transparent {
@@ -61,29 +67,5 @@ impl Collider {
             ),
             vec![],
         )
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use geo::prelude::Intersects;
-
-
-    #[test]
-    fn test() {
-       let pol_1 = Polygon::new(
-           LineString::from(
-               vec![(144., 96.), (176., 96.), (176., 64.), (144., 64.), (144., 96.)]
-           ),
-           vec![],
-       );
-        let pol_2 = Polygon::new(
-            LineString::from(
-                vec![(248., 128.), (256., 128.), (256., 96.), (248., 96.), (248., 128.)]
-            ),
-            vec![],
-        );
-        assert_eq!(false, pol_1.intersects(&pol_2));
     }
 }

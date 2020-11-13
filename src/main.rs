@@ -19,6 +19,8 @@ use amethyst::{
 use crate::states::level::LevelState;
 use crate::systems::ship_systems::ShipSystem;
 use crate::systems::collision_system::CollisionSystem;
+use crate::entities::ship::Thrusters;
+use crate::systems::thruster_system::ThrustersSystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -53,7 +55,12 @@ fn main() -> amethyst::Result<()> {
             CollisionSystem,
             "collision_system",
             &[],
-        );
+        )
+        .with(
+            ThrustersSystem,
+            "thrusters_system",
+            &[],
+        )
         ;
 
     let mut game = Application::new(resources, LevelState, game_data)?;
