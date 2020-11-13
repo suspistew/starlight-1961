@@ -9,7 +9,10 @@ use std::fs::File;
 use serde_json::from_reader;
 use serde::Deserialize;
 use std::collections::HashMap;
-use crate::entities::ship::{Ship, ShipParent};
+use crate::entities::ship::{Ship, ShipParent, Thrusters};
+use crate::resources::ship_resource::ShipResource;
+use crate::utils::sprite_to_colliders::sprite_to_colliders;
+use crate::entities::collision::Transparent;
 
 pub const SCREEN_HEIGHT: f32 = 576.0;
 pub const SCREEN_WIDTH: f32 = 704.0;
@@ -35,8 +38,8 @@ impl SimpleState for LevelState {
         initialize_layer(world, &level, misc_spritesheet_handle.clone(), "structures", 0.05);
         initialize_layer(world, &level, misc_spritesheet_handle.clone(), "entities", 0.03);
 
+        world.insert(ShipResource::new_from_level(&level));
         let ship = initialize_ship(world, &level, ship_spritesheet_handle);
-
         initialize_camera(world, &level, ship);
     }
 }
@@ -98,11 +101,16 @@ fn initialize_layer(
                             tile_y as f32 * TILE_SIZE,
                             layer_position,
                         );
-                        world
+
+                        let collider = sprite_to_colliders((tile_number - 1) as usize, tile_x as f32 * TILE_SIZE, tile_y as f32 * TILE_SIZE);
+
+                        let mut builder = world
                             .create_entity()
                             .with(sprite_render)
-                            .with(transform)
-                            .build();
+                            .with(transform);
+
+                        if collider.is_some() { builder = builder.with(collider.unwrap()); }
+                        builder.build();
                     }
                 }
             }
@@ -118,15 +126,20 @@ fn initialize_ship(
     level: &LevelConfig,
     sprite_sheet_handle: Handle<SpriteSheet>,
 ) -> Entity {
-    let sprite_render = SpriteRender {
+    let ship_sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet_handle.clone(),
         sprite_number: 0,
     };
 
+    let thrusters_sprite_render = SpriteRender {
+        sprite_sheet: sprite_sheet_handle.clone(),
+        sprite_number: 5,
+    };
+
     let mut transform = Transform::default();
     transform.set_translation_xyz(
-        level.start_x as f32 * TILE_SIZE,
-        ((level.height - level.start_y) as f32 * TILE_SIZE) - 26.,
+        level.start_x as f32 * TILE_SIZE - 16.,
+        ((level.height - level.start_y) as f32 * TILE_SIZE) - 32.,
         0.04,
     );
 
@@ -136,22 +149,30 @@ fn initialize_ship(
         .with(transform)
         .build();
     let mut transform_ship = Transform::default();
-    world
+    let ship = world
         .create_entity()
-        .with(sprite_render)
-        .with(Ship::new(0., 0., 0., level.start_x as f32 * TILE_SIZE, ((level.height - level.start_y) as f32 * TILE_SIZE) - 26.))
+        .with(ship_sprite_render)
+        .with(Ship)
         .with(transform_ship)
         .with(Parent { entity: parent })
         .build();
+
+    let mut transform_thruster = Transform::default();
+    transform_thruster.set_translation_xyz(0., -32., 0.);
+    world
+        .create_entity()
+        .with(thrusters_sprite_render)
+        .with(Thrusters)
+        .with(transform_thruster)
+        .with(Parent { entity: ship })
+        .build();
+
     parent
 }
 
 pub fn initialize_camera(world: &mut World, level_config: &LevelConfig, ship: Entity) {
     let mut transform = Transform::default();
     transform.set_translation_z(1.0);
-    //transform.set_translation_x((level_config.start_x as f32 * TILE_SIZE));
-    //transform.set_translation_y((level_config.height - level_config.start_y) as f32 * TILE_SIZE);
-
     world
         .create_entity()
         .with(Camera::standard_2d(SCREEN_WIDTH, SCREEN_HEIGHT))

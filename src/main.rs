@@ -1,6 +1,8 @@
 mod states;
 mod entities;
 mod systems;
+mod resources;
+mod utils;
 
 use amethyst::{
     core::transform::TransformBundle,
@@ -16,6 +18,7 @@ use amethyst::{
 };
 use crate::states::level::LevelState;
 use crate::systems::ship_systems::ShipSystem;
+use crate::systems::collision_system::CollisionSystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -45,7 +48,13 @@ fn main() -> amethyst::Result<()> {
             ShipSystem,
             "ship_system",
             &["input_system"],
-        );;
+        )
+        .with(
+            CollisionSystem,
+            "collision_system",
+            &[],
+        );
+        ;
 
     let mut game = Application::new(resources, LevelState, game_data)?;
     game.run();
