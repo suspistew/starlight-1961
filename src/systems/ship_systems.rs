@@ -5,7 +5,7 @@ use amethyst::input::{InputHandler, StringBindings};
 use amethyst::renderer::SpriteRender;
 use crate::resources::ship_resource::ShipResource;
 use amethyst::core::num::FloatConst;
-use std::panic::resume_unwind;
+
 
 pub struct ShipSystem ;
 

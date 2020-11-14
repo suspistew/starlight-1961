@@ -19,7 +19,7 @@ impl<'s> System<'s> for CollisionSystem {
     fn run(&mut self, (colliders, ships, transforms, ship_resource): Self::SystemData) {
         for (_ship, transform) in (&ships, &transforms).join() {
             let ship_polygon = ship_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);
-            for (collider) in (&colliders).join() {
+            for collider in (&colliders).join() {
                 let struct_polygons = collider.polygons();
                 are_colliding(&ship_polygon, struct_polygons);
             }
