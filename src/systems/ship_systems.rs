@@ -11,7 +11,7 @@ pub struct ShipSystem;
 
 fn ANGLE_ROTATION_MODIFIER_BIND_TO_PI() -> f32 { f32::PI() / 96. }
 
-const ANGLE_ROTATION_DEGREE_MODIFIER: f32 = 1.875;
+pub const ANGLE_ROTATION_DEGREE_MODIFIER: f32 = 1.875;
 
 
 impl<'s> System<'s> for ShipSystem {
@@ -33,14 +33,24 @@ impl<'s> System<'s> for ShipSystem {
             } else {
                 ship_resource.apply_gravity();
             }
-            if let Some(true) = input.action_is_down("rotate_left") {
-                if transform.rotation().quaternion().k < 0.50 {
+            if !ship_resource.is_landed {
+                if let Some(true) = input.action_is_down("rotate_left") {
+                    if transform.rotation().quaternion().k < 0.50 {
+                        transform.prepend_rotation_z_axis(-1. * ANGLE_ROTATION_MODIFIER_BIND_TO_PI());
+                        ship_resource.current_rotation_angle -= ANGLE_ROTATION_DEGREE_MODIFIER;
+                    }
+                }
+                if let Some(true) = input.action_is_down("rotate_right") {
+                    if transform.rotation().quaternion().k > -0.50 {
+                        transform.prepend_rotation_z_axis(ANGLE_ROTATION_MODIFIER_BIND_TO_PI());
+                        ship_resource.current_rotation_angle += ANGLE_ROTATION_DEGREE_MODIFIER;
+                    }
+                }
+            }else{
+                if ship_resource.current_rotation_angle > 0. {
                     transform.prepend_rotation_z_axis(-1. * ANGLE_ROTATION_MODIFIER_BIND_TO_PI());
                     ship_resource.current_rotation_angle -= ANGLE_ROTATION_DEGREE_MODIFIER;
-                }
-            }
-            if let Some(true) = input.action_is_down("rotate_right") {
-                if transform.rotation().quaternion().k > -0.50 {
+                } else if ship_resource.current_rotation_angle < 0. {
                     transform.prepend_rotation_z_axis(ANGLE_ROTATION_MODIFIER_BIND_TO_PI());
                     ship_resource.current_rotation_angle += ANGLE_ROTATION_DEGREE_MODIFIER;
                 }

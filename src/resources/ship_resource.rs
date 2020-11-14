@@ -36,13 +36,14 @@ impl ShipResource {
     }
 
     pub fn power(&mut self, rotation: &UnitQuaternion<f32>) {
+        self.is_landed = false;
         self.y_force += calculate_y_force(rotation.rotation().quaternion().k);
         self.x_force += calculate_x_force(rotation.rotation().quaternion().k);
         self.power += 1;
     }
 
     pub fn apply_gravity(&mut self) {
-        if !self.is_landed {}
+        if self.is_landed {return;}
         self.y_force -= 0.02;
         // TODO : Add x force lose
         self.power = 0;

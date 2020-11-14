@@ -1,5 +1,5 @@
 use amethyst::core::ecs::{System, ReadStorage, Write, Join, Entities};
-use crate::entities::collision::{Colliders, LandingPlatform};
+use crate::entities::collision::{Colliders, LandingPlatform, are_colliding};
 use crate::entities::ship::ShipParent;
 use amethyst::core::Transform;
 use crate::resources::ship_resource::ShipResource;
@@ -26,8 +26,8 @@ impl<'s> System<'s> for CollisionSystem {
                 let struct_polygons = collider.polygons();
                 if !ship_resource.is_exploding &&  are_colliding(&ship_polygon, struct_polygons) {
                     ship_resource.is_exploding = true;
-                    println!("colliding");
-/*
+                    // TODO : if hit to hard then explode else bounce
+                    /*
                     entities
                         .build_entity()
                         .with(Explosion)
@@ -39,16 +39,5 @@ impl<'s> System<'s> for CollisionSystem {
             }
         }
     }
-}
-
-fn are_colliding(ship_polygon: &Vec<Polygon<f32>>, struct_polygons: &Vec<Polygon<f32>>) -> bool {
-    for polygon in ship_polygon.iter() {
-        for struct_polygon in struct_polygons.iter() {
-            if polygon.intersects(struct_polygon) {
-                return true;
-            }
-        }
-    }
-    false
 }
 

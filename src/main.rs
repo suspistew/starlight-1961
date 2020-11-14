@@ -21,6 +21,7 @@ use crate::systems::ship_systems::ShipSystem;
 use crate::systems::collision_system::CollisionSystem;
 use crate::entities::ship::Thrusters;
 use crate::systems::thruster_system::ThrustersSystem;
+use crate::systems::landing_system::LandingSystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -59,6 +60,11 @@ fn main() -> amethyst::Result<()> {
         .with(
             ThrustersSystem,
             "thrusters_system",
+            &[],
+        )
+        .with(
+            LandingSystem,
+            "landing_system",
             &[],
         )
         ;
