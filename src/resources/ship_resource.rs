@@ -1,5 +1,5 @@
 use rand::Rng;
-use crate::states::level::{LevelConfig, TILE_SIZE};
+use crate::states::level::{LevelConfig};
 use crate::entities::collision::{Colliders, Collider};
 use crate::utils::Point2D;
 use geo::Polygon;
@@ -31,7 +31,7 @@ impl ShipResource {
         }
     }
 
-    pub fn new_from_level(config: &LevelConfig) -> ShipResource {
+    pub fn new_from_level(_config: &LevelConfig) -> ShipResource {
         ShipResource::new (0., 0., 1.0)
     }
 
@@ -50,7 +50,7 @@ impl ShipResource {
 
 
 
-    pub fn init_resource_from_level(&mut self, config: LevelConfig) {
+    pub fn init_resource_from_level(&mut self, _config: LevelConfig) {
         self.x_force= 0.;
         self.y_force = 0.;
         self.gravity = 1.0;

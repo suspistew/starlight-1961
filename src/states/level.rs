@@ -3,7 +3,7 @@ use amethyst::core::ecs::{World, WorldExt, Builder, Entity};
 use amethyst::renderer::{SpriteSheet, SpriteRender, ImageFormat, Texture, SpriteSheetFormat, Camera};
 use std::io::BufRead;
 use amethyst::core::{Transform, Parent};
-use amethyst::assets::{Handle, PrefabLoader, RonFormat, Loader, AssetStorage};
+use amethyst::assets::{Handle, Loader, AssetStorage};
 
 use std::fs::File;
 use serde_json::from_reader;
@@ -12,7 +12,7 @@ use std::collections::HashMap;
 use crate::entities::ship::{Ship, ShipParent, Thrusters};
 use crate::resources::ship_resource::ShipResource;
 use crate::utils::sprite_to_colliders::{sprite_to_colliders, is_landing_platform_start};
-use crate::entities::collision::{Transparent, LandingPlatform};
+use crate::entities::collision::{LandingPlatform};
 
 pub const SCREEN_HEIGHT: f32 = 576.0;
 pub const SCREEN_WIDTH: f32 = 704.0;
@@ -36,7 +36,7 @@ impl SimpleState for LevelState {
 
         initialize_layer(world, &level, misc_spritesheet_handle.clone(), "background", 0.01);
         initialize_layer(world, &level, misc_spritesheet_handle.clone(), "structures", 0.05);
-        initialize_layer(world, &level, misc_spritesheet_handle.clone(), "entities", 0.03);
+        initialize_layer(world, &level, misc_spritesheet_handle, "entities", 0.03);
 
         world.insert(ShipResource::new_from_level(&level));
         let ship = initialize_ship(world, &level, ship_spritesheet_handle);
@@ -133,7 +133,7 @@ fn initialize_ship(
     };
 
     let thrusters_sprite_render = SpriteRender {
-        sprite_sheet: sprite_sheet_handle.clone(),
+        sprite_sheet: sprite_sheet_handle,
         sprite_number: 5,
     };
 
@@ -149,7 +149,7 @@ fn initialize_ship(
         .with(ShipParent)
         .with(transform)
         .build();
-    let mut transform_ship = Transform::default();
+    let transform_ship = Transform::default();
     let ship = world
         .create_entity()
         .with(ship_sprite_render)
@@ -171,7 +171,7 @@ fn initialize_ship(
     parent
 }
 
-pub fn initialize_camera(world: &mut World, level_config: &LevelConfig, ship: Entity) {
+pub fn initialize_camera(world: &mut World, _level_config: &LevelConfig, ship: Entity) {
     let mut transform = Transform::default();
     transform.set_translation_z(1.0);
     world

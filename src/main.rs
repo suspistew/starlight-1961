@@ -19,7 +19,7 @@ use amethyst::{
 use crate::states::level::LevelState;
 use crate::systems::ship_systems::ShipSystem;
 use crate::systems::collision_system::CollisionSystem;
-use crate::entities::ship::Thrusters;
+
 use crate::systems::thruster_system::ThrustersSystem;
 
 fn main() -> amethyst::Result<()> {

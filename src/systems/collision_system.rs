@@ -5,7 +5,7 @@ use amethyst::core::Transform;
 use crate::resources::ship_resource::ShipResource;
 use geo::algorithm::intersects::Intersects;
 use geo::Polygon;
-use crate::entities::explosion::Explosion;
+
 
 pub struct CollisionSystem;
 
@@ -19,7 +19,7 @@ impl<'s> System<'s> for CollisionSystem {
         Entities<'s>,
     );
 
-    fn run(&mut self, (colliders, landing_plateforms, ships, transforms, mut ship_resource, entities): Self::SystemData) {
+    fn run(&mut self, (colliders, landing_plateforms, ships, transforms, mut ship_resource, _entities): Self::SystemData) {
         for (_ship, transform) in (&ships, &transforms).join() {
             let ship_polygon = ship_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);
             for (collider, _) in (&colliders, !&landing_plateforms).join() {

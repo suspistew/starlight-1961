@@ -1,11 +1,11 @@
 use amethyst::core::ecs::{System, WriteStorage, ReadStorage, Read, Join, Write};
 use amethyst::core::Transform;
-use crate::entities::ship::{Ship, ShipParent, Thrusters};
+use crate::entities::ship::{Ship, ShipParent};
 use amethyst::input::{InputHandler, StringBindings};
 use amethyst::renderer::SpriteRender;
 use crate::resources::ship_resource::ShipResource;
 use amethyst::core::num::FloatConst;
-use std::panic::resume_unwind;
+
 
 pub struct ShipSystem;
 

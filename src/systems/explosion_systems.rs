@@ -19,7 +19,7 @@ impl <'s> System<'s> for ExplosionSystem {
         Entities<'s>,
     );
 
-    fn run(&mut self, (sprites, entities): Self::SystemData) {
+    fn run(&mut self, (_sprites, _entities): Self::SystemData) {
 
     }
 
