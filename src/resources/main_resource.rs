@@ -5,34 +5,59 @@ use crate::utils::Point2D;
 use geo::Polygon;
 use amethyst::core::math::UnitQuaternion;
 use amethyst::core::alga::linear::Similarity;
+use amethyst::assets::Handle;
+use amethyst::renderer::SpriteSheet;
 
-pub struct ShipResource {
+pub struct MainResource {
     pub x_force: f32,
     pub y_force: f32,
     pub current_rotation_angle: f32,
     pub power: usize,
-    pub last_sprite: usize,
     pub is_landed: bool,
     pub is_exploding: bool,
+    pub should_be_reset: bool,
     gravity: f32,
+    current_level_config: Option<LevelConfig>,
+    pub sprites: Option<ShipSprites>
+
 }
 
-impl ShipResource {
-    fn new(x_force: f32, y_force: f32, gravity: f32) -> ShipResource {
-        ShipResource {
+pub struct ShipSprites {
+    pub explosion_sprite_render: Handle<SpriteSheet>
+}
+
+impl MainResource {
+    fn new(x_force: f32, y_force: f32, gravity: f32, current_level_config: Option<LevelConfig>) -> MainResource {
+        MainResource {
             x_force,
             y_force,
             gravity,
             current_rotation_angle: 0.,
             power: 0,
-            last_sprite: 0,
             is_landed: true,
-            is_exploding: false
+            is_exploding: false,
+            should_be_reset: false,
+            current_level_config,
+            sprites: None
         }
     }
 
-    pub fn new_from_level(config: &LevelConfig) -> ShipResource {
-        ShipResource::new (0., 0., 1.0)
+    pub fn level_config(&self) -> &LevelConfig {
+        &(self.current_level_config.as_ref().unwrap())
+    }
+
+    pub fn new_from_level(config: Option<LevelConfig>) -> MainResource {
+        MainResource::new (0., 0., 1.0, config)
+    }
+
+    pub fn reset(&mut self) {
+        self.is_landed = true;
+        self.y_force = 0.;
+        self.x_force = 0.;
+        self.power = 0;
+        self.current_rotation_angle = 0.;
+        self.is_exploding = false;
+        self.should_be_reset = false;
     }
 
     pub fn power(&mut self, rotation: &UnitQuaternion<f32>) {
@@ -75,9 +100,9 @@ impl ShipResource {
     }
 }
 
-impl Default for ShipResource {
+impl Default for MainResource {
     fn default() -> Self {
-        ShipResource::new(0., 0., 0.)
+        MainResource::new(0., 0., 0., None)
     }
 }
 

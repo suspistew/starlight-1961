@@ -1,1 +1,1 @@
-pub mod ship_resource;
+pub mod main_resource;

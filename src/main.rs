@@ -22,6 +22,8 @@ use crate::systems::collision_system::CollisionSystem;
 use crate::entities::ship::Thrusters;
 use crate::systems::thruster_system::ThrustersSystem;
 use crate::systems::landing_system::LandingSystem;
+use amethyst::renderer::palette::Srgba;
+use crate::systems::explosion_systems::ExplosionSystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -31,6 +33,10 @@ fn main() -> amethyst::Result<()> {
     let resources = app_root.join("assets");
     let display_config = app_root.join("config/display_config.ron");
     let key_bindings_path = app_root.join("config/bindings.ron");
+
+    let (r, g, b, a) = Srgba::new(31. / 255., 54. / 255., 50. / 255., 1.)
+         .into_linear()
+         .into_components();
 
     let game_data = GameDataBuilder::default()
         .with_bundle(TransformBundle::new())?
@@ -42,7 +48,7 @@ fn main() -> amethyst::Result<()> {
             RenderingBundle::<DefaultBackend>::new()
                 .with_plugin(
                     RenderToWindow::from_config_path(display_config)?
-                        .with_clear([0., 0., 0., 255.]),
+                        .with_clear([r, g, b, a]),
                 )
                 .with_plugin(RenderUi::default())
                 .with_plugin(RenderFlat2D::default()),
@@ -65,6 +71,11 @@ fn main() -> amethyst::Result<()> {
         .with(
             LandingSystem,
             "landing_system",
+            &[],
+        )
+        .with(
+            ExplosionSystem::new(),
+            "explosion_system",
             &[],
         )
         ;

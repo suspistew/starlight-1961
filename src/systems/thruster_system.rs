@@ -1,5 +1,5 @@
 use amethyst::core::ecs::{System, Read, ReadStorage, WriteStorage, Join};
-use crate::resources::ship_resource::ShipResource;
+use crate::resources::main_resource::MainResource;
 use crate::entities::ship::Thrusters;
 use amethyst::renderer::SpriteRender;
 
@@ -9,7 +9,7 @@ impl<'s> System<'s> for ThrustersSystem {
     type SystemData = (
         ReadStorage<'s, Thrusters>,
         WriteStorage<'s, SpriteRender>,
-        Read<'s, ShipResource>,
+        Read<'s, MainResource>,
     );
 
     fn run(&mut self, (thrusters, mut sprite_renders, ship_resource): Self::SystemData) {

@@ -10,7 +10,7 @@ use serde_json::from_reader;
 use serde::Deserialize;
 use std::collections::HashMap;
 use crate::entities::ship::{Ship, ShipParent, Thrusters};
-use crate::resources::ship_resource::ShipResource;
+use crate::resources::main_resource::{MainResource, ShipSprites};
 use crate::utils::sprite_to_colliders::{sprite_to_colliders, is_landing_platform_start};
 use crate::entities::collision::{Transparent, LandingPlatform};
 
@@ -25,6 +25,9 @@ const CONFIG_MISC: &str = "sprites/main.ron";
 const IMAGE_SHIP: &str = "sprites/space_ship.png";
 const CONFIG_SHIP: &str = "sprites/space_ship.ron";
 
+const IMAGE_EXPLOSION: &str = "sprites/explosion.png";
+const CONFIG_EXPLOSION: &str = "sprites/explosion.ron";
+
 pub struct LevelState;
 
 impl SimpleState for LevelState {
@@ -33,14 +36,16 @@ impl SimpleState for LevelState {
         let world = data.world;
         let misc_spritesheet_handle = load_misc_spritesheet(world);
         let ship_spritesheet_handle = load_ship_spritesheet(world);
+        let ship_explosion_handle = load_explosion_spritesheet(world);
 
         initialize_layer(world, &level, misc_spritesheet_handle.clone(), "background", 0.01);
         initialize_layer(world, &level, misc_spritesheet_handle.clone(), "structures", 0.05);
         initialize_layer(world, &level, misc_spritesheet_handle.clone(), "entities", 0.03);
-
-        world.insert(ShipResource::new_from_level(&level));
         let ship = initialize_ship(world, &level, ship_spritesheet_handle);
         initialize_camera(world, &level, ship);
+        let mut ship_resource = MainResource::new_from_level(Some(level));
+        ship_resource.sprites = Some(ShipSprites { explosion_sprite_render: ship_explosion_handle });
+        world.insert(ship_resource);
     }
 }
 
@@ -50,6 +55,10 @@ pub fn load_misc_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
 
 pub fn load_ship_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
     load_texture(world, IMAGE_SHIP, CONFIG_SHIP)
+}
+
+pub fn load_explosion_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
+    load_texture(world, IMAGE_EXPLOSION, CONFIG_EXPLOSION)
 }
 
 fn load_texture(world: &mut World, image: &str, config: &str) -> Handle<SpriteSheet> {
@@ -173,7 +182,7 @@ fn initialize_ship(
 
 pub fn initialize_camera(world: &mut World, level_config: &LevelConfig, ship: Entity) {
     let mut transform = Transform::default();
-    transform.set_translation_z(1.0);
+    transform.set_translation_xyz(0., -100., 1.);
     world
         .create_entity()
         .with(Camera::standard_2d(SCREEN_WIDTH, SCREEN_HEIGHT))

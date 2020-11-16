@@ -5,3 +5,4 @@ pub struct Explosion;
 impl Component for Explosion {
     type Storage = DenseVecStorage<Self>;
 }
+
