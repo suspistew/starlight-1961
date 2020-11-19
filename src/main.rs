@@ -31,8 +31,8 @@ fn main() -> amethyst::Result<()> {
     let app_root = application_root_dir()?;
 
     let resources = app_root.join("assets");
-    let display_config = app_root.join("config/display_config.ron");
-    let key_bindings_path = app_root.join("config/bindings.ron");
+    let display_config = app_root.join("assets/config/display_config.ron");
+    let key_bindings_path = app_root.join("assets/config/bindings.ron");
 
     let (r, g, b, a) = Srgba::new(31. / 255., 54. / 255., 50. / 255., 1.)
          .into_linear()

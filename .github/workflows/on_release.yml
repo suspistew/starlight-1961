@@ -1,0 +1,51 @@
+name: Create release for all platforms
+on:
+  release:
+    types: [published]
+
+jobs:
+  abstract_build:
+    name: Build ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      matrix:
+        config:
+        - { os: ubuntu-18.04, name: starlight-1961-linux, archive: starlight-1961_linux.zip, bin: starlight-1961, ui: vulkan }
+        - { os: macos-latest, name: starlight-1961-macos, archive: starlight-1961_macOs.zip,bin: starlight-1961, ui: metal }
+        - { os: windows-latest, name: starlight-1961-windows, archive: starlight-1961_windows.zip,bin: starlight-1961.exe, ui: vulkan }
+    steps:
+      - uses: actions-rs/toolchain@v1.0.6
+        with:
+          toolchain: stable
+      - name: install lib
+        if: matrix.config.os == 'ubuntu-18.04'
+        run: sudo apt install libasound2-dev cmake libxcb-shape0-dev libxcb-xfixes0-dev
+      - uses: actions/checkout@master
+      - run: cargo build --release --features ${{matrix.config.ui}}
+      - run: mkdir ${{matrix.config.name}}
+      - name: Move files (Linux & Mac)
+        if: matrix.config.os != 'windows-latest'
+        run: |
+          mv target/release/${{matrix.config.bin}} ${{matrix.config.name}}/${{matrix.config.bin}}
+          mv assets ${{matrix.config.name}}/assets
+      - name: Move files (Windows)
+        if: matrix.config.os == 'windows-latest'
+        run: |
+          move target/release/${{matrix.config.bin}} ${{matrix.config.name}}/${{matrix.config.bin}}
+          move assets ${{matrix.config.name}}/assets
+      - name: Zip files (Linux & Mac)
+        if: matrix.config.os != 'windows-latest'
+        run: 7z a -t7z ${{matrix.config.archive}} ${{matrix.config.name}}
+      - name: Zip files (Windows)
+        if: matrix.config.os == 'windows-latest'
+        run: 7z a -t7z ${{matrix.config.archive}} ${{matrix.config.name}}
+      - uses: little-core-labs/get-git-tag@v3.0.2
+      - name: Upload matrix release asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_name: ${{matrix.config.archive}}
+          asset_path: ${{matrix.config.archive}}
+          asset_content_type: application/octet-stream

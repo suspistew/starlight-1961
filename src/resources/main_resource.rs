@@ -60,16 +60,16 @@ impl MainResource {
         self.should_be_reset = false;
     }
 
-    pub fn power(&mut self, rotation: &UnitQuaternion<f32>) {
+    pub fn power(&mut self, delta_time: f32,  rotation: &UnitQuaternion<f32>) {
         self.is_landed = false;
-        self.y_force += calculate_y_force(rotation.rotation().quaternion().k);
-        self.x_force += calculate_x_force(rotation.rotation().quaternion().k);
+        self.y_force += delta_time * calculate_y_force(rotation.rotation().quaternion().k);
+        self.x_force += delta_time * calculate_x_force(rotation.rotation().quaternion().k);
         self.power += 1;
     }
 
-    pub fn apply_gravity(&mut self) {
+    pub fn apply_gravity(&mut self, delta_time: f32) {
         if self.is_landed {return;}
-        self.y_force -= 0.02;
+        self.y_force -= 1.5 * delta_time;
         // TODO : Add x force lose
         self.power = 0;
     }
@@ -108,9 +108,9 @@ impl Default for MainResource {
 
 
 fn calculate_y_force(z_rotation: f32) -> f32 {
-    0.02 * ((0.75 - (z_rotation.abs())) / 0.75)
+    1. * ((0.75 - (z_rotation.abs())) / 0.75)
 }
 
 fn calculate_x_force(z_rotation: f32) -> f32 {
-    -0.05 * ((z_rotation) / 0.50)
+    -1. * ((z_rotation) / 0.50)
 }

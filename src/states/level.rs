@@ -197,6 +197,7 @@ fn read_level(lvl_number: usize) -> LevelConfig {
         env!("CARGO_MANIFEST_DIR"),
         lvl_number
     );
+    println!("Will try to read {:?}", input_path);
     let f = File::open(&input_path).expect("Failed opening file");
     let res: LevelConfig = match from_reader(f) {
         Ok(x) => x,

@@ -1,5 +1,5 @@
 use amethyst::core::ecs::{System, WriteStorage, ReadStorage, Read, Join, Write};
-use amethyst::core::Transform;
+use amethyst::core::{Transform, Time};
 use crate::entities::ship::{Ship, ShipParent, Thrusters};
 use amethyst::input::{InputHandler, StringBindings};
 use amethyst::renderer::SpriteRender;
@@ -23,17 +23,18 @@ impl<'s> System<'s> for ShipSystem {
         Read<'s, InputHandler<StringBindings>>,
         WriteStorage<'s, SpriteRender>,
         Write<'s, MainResource>,
+        Read<'s, Time>,
     );
 
-    fn run(&mut self, (mut transforms, ships, ships_parent, input, mut sprites, mut main_resource): Self::SystemData) {
+    fn run(&mut self, (mut transforms, ships, ships_parent, input, mut sprites, mut main_resource, time): Self::SystemData) {
         for (_, transform, sprite_render) in (&ships, &mut transforms, &mut sprites).join() {
             if main_resource.should_be_reset{ transform.set_rotation_z_axis(0.); break; }
             if main_resource.is_exploding { if true { sprite_render.sprite_number = 5 } return; }
             sprite_render.sprite_number = main_resource.sprite_nb();
             if let Some(true) = input.action_is_down("power") {
-                main_resource.power(transform.rotation());
+                main_resource.power(time.delta_seconds(), transform.rotation());
             } else {
-                main_resource.apply_gravity();
+                main_resource.apply_gravity(time.delta_seconds());
             }
             if !main_resource.is_landed {
                 if let Some(true) = input.action_is_down("rotate_left") {
