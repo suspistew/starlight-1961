@@ -13,6 +13,7 @@ use crate::entities::ship::{Ship, ShipParent, Thrusters};
 use crate::resources::main_resource::{MainResource, ShipSprites};
 use crate::utils::sprite_to_colliders::{sprite_to_colliders, is_landing_platform_start};
 use crate::entities::collision::{Transparent, LandingPlatform};
+use amethyst::utils::application_root_dir;
 
 pub const SCREEN_HEIGHT: f32 = 576.0;
 pub const SCREEN_WIDTH: f32 = 704.0;
@@ -193,12 +194,12 @@ pub fn initialize_camera(world: &mut World, level_config: &LevelConfig, ship: En
 
 fn read_level(lvl_number: usize) -> LevelConfig {
     let input_path = format!(
-        "{}/assets/levels/level_{}.json",
-        env!("CARGO_MANIFEST_DIR"),
+        "assets/levels/level_{}.json",
         lvl_number
     );
-    println!("Will try to read {:?}", input_path);
-    let f = File::open(&input_path).expect("Failed opening file");
+    let app_root = application_root_dir().unwrap();
+    let input_path = app_root.join(input_path.as_str());
+    let f = File::open(&input_path.as_path()).expect("Failed opening file");
     let res: LevelConfig = match from_reader(f) {
         Ok(x) => x,
         Err(e) => {
