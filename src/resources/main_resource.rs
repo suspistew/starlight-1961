@@ -16,7 +16,7 @@ pub struct MainResource {
     pub is_landed: bool,
     pub is_exploding: bool,
     pub should_be_reset: bool,
-    gravity: f32,
+    _gravity: f32,
     current_level_config: Option<LevelConfig>,
     pub sprites: Option<ShipSprites>
 
@@ -31,7 +31,7 @@ impl MainResource {
         MainResource {
             x_force,
             y_force,
-            gravity,
+            _gravity: gravity,
             current_rotation_angle: 0.,
             power: 0,
             is_landed: true,
@@ -74,19 +74,8 @@ impl MainResource {
         self.power = 0;
     }
 
-
-
-    pub fn init_resource_from_level(&mut self, config: LevelConfig) {
-        self.x_force= 0.;
-        self.y_force = 0.;
-        self.gravity = 1.0;
-        self.current_rotation_angle = 0.;
-    }
-
     pub fn get_colliders_polygons(&self, x: f32, y:f32) -> Vec<Polygon<f32>> {
-        // println!("x:y {}:{}", x/ 32., y/32.);
         let main_collider = Collider::new(Point2D{x, y}, 32., -32.);
-        // println!("collider : {:?}", main_collider);
         let colliders = Colliders::from_vec(vec![main_collider]);
         colliders.to_owned_polygons()
     }

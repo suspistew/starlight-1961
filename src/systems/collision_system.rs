@@ -8,6 +8,9 @@ use geo::Polygon;
 use crate::entities::explosion::Explosion;
 use amethyst::renderer::{SpriteRender, SpriteSheet};
 use amethyst::assets::Handle;
+use amethyst::core::ecs::storage::MaskedStorage;
+use amethyst_tiles::{TileMap, MortonEncoder2D};
+use crate::utils::starlight_tile::StartLightTile;
 
 pub struct CollisionSystem;
 
@@ -21,9 +24,10 @@ impl<'s> System<'s> for CollisionSystem {
         WriteStorage<'s, Explosion>,
         WriteStorage<'s, SpriteRender>,
         Entities<'s>,
+        ReadStorage<'s, TileMap<StartLightTile, MortonEncoder2D>>
     );
 
-    fn run(&mut self, (colliders, landing_plateforms, ships, mut transforms, mut ship_resource, mut explosions, mut sprite_renders, entities): Self::SystemData) {
+    fn run(&mut self, (colliders, landing_plateforms, ships, mut transforms, mut ship_resource, mut explosions, mut sprite_renders, entities, tilemap): Self::SystemData) {
         let mut explosion_information = (false, 0., 0.);
         for (_ship, transform) in (&ships, &transforms).join() {
             let ship_polygon = ship_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);

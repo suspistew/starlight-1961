@@ -25,13 +25,6 @@ impl Colliders {
         Colliders { polygons: colliders.iter().map(|collider| collider.to_polygon()).collect(), colliders }
     }
 
-    fn new() -> Colliders {
-        Colliders {
-            polygons: Vec::new(),
-            colliders: Vec::new()
-        }
-    }
-
     pub fn polygons(&self) -> &Vec<Polygon<f32>> {
         &self.polygons
     }

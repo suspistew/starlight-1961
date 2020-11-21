@@ -37,7 +37,7 @@ impl <'s> System<'s> for ExplosionSystem {
                         sprite.sprite_number += 1;
                         self.sprite_update_timer.replace(0.08);
                     }else{
-                        entities.delete(entity);
+                        let _deletion = entities.delete(entity);
                         self.sprite_update_timer = None;
                         ship_resource.should_be_reset = true;
                     }

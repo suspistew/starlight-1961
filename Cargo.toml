@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 amethyst = "0.15.3"
+amethyst_tiles = "0.15.3"
 serde = "1.0.117"
 serde_json = "1.0.59"
 rand = "0.7.3"

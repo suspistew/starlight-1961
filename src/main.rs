@@ -24,6 +24,9 @@ use crate::systems::thruster_system::ThrustersSystem;
 use crate::systems::landing_system::LandingSystem;
 use amethyst::renderer::palette::Srgba;
 use crate::systems::explosion_systems::ExplosionSystem;
+use crate::utils::starlight_tile::StartLightTile;
+use amethyst_tiles::MortonEncoder;
+use amethyst_tiles::RenderTiles2D;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -51,7 +54,8 @@ fn main() -> amethyst::Result<()> {
                         .with_clear([r, g, b, a]),
                 )
                 .with_plugin(RenderUi::default())
-                .with_plugin(RenderFlat2D::default()),
+                .with_plugin(RenderFlat2D::default())
+                .with_plugin(RenderTiles2D::<StartLightTile, MortonEncoder>::default()),
         )?
         .with(
             ShipSystem,
