@@ -15,6 +15,7 @@ impl Component for Transparent {
     type Storage = DenseVecStorage<Self>;
 }
 
+#[derive(Debug)]
 pub struct Colliders {
     colliders: Vec<Collider>,
     polygons: Vec<Polygon<f32>>

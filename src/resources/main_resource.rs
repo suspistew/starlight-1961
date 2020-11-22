@@ -18,12 +18,14 @@ pub struct MainResource {
     pub should_be_reset: bool,
     _gravity: f32,
     current_level_config: Option<LevelConfig>,
-    pub sprites: Option<ShipSprites>
+    pub sprites: Option<MainSprites>,
 
+    pub ship_life: usize,
 }
 
-pub struct ShipSprites {
-    pub explosion_sprite_render: Handle<SpriteSheet>
+pub struct MainSprites {
+    pub explosion_sprite_render: Handle<SpriteSheet>,
+    pub bullet_sprite_render: Handle<SpriteSheet>
 }
 
 impl MainResource {
@@ -38,7 +40,8 @@ impl MainResource {
             is_exploding: false,
             should_be_reset: false,
             current_level_config,
-            sprites: None
+            sprites: None,
+            ship_life: 3
         }
     }
 
@@ -58,6 +61,7 @@ impl MainResource {
         self.current_rotation_angle = 0.;
         self.is_exploding = false;
         self.should_be_reset = false;
+        self.ship_life = 3;
     }
 
     pub fn power(&mut self, delta_time: f32,  rotation: &UnitQuaternion<f32>) {

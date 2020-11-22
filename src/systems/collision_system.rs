@@ -11,6 +11,7 @@ use amethyst::assets::Handle;
 use amethyst::core::ecs::storage::MaskedStorage;
 use amethyst_tiles::{TileMap, MortonEncoder2D};
 use crate::utils::starlight_tile::StartLightTile;
+use crate::entities::canons::Bullet;
 
 pub struct CollisionSystem;
 
@@ -23,15 +24,15 @@ impl<'s> System<'s> for CollisionSystem {
         Write<'s, MainResource>,
         WriteStorage<'s, Explosion>,
         WriteStorage<'s, SpriteRender>,
-        Entities<'s>,
-        ReadStorage<'s, TileMap<StartLightTile, MortonEncoder2D>>
+        ReadStorage<'s, Bullet>,
+        Entities<'s>
     );
 
-    fn run(&mut self, (colliders, landing_plateforms, ships, mut transforms, mut ship_resource, mut explosions, mut sprite_renders, entities, tilemap): Self::SystemData) {
+    fn run(&mut self, (colliders, landing_plateforms, ships, mut transforms, mut ship_resource, mut explosions, mut sprite_renders, bullets, entities): Self::SystemData) {
         let mut explosion_information = (false, 0., 0.);
         for (_ship, transform) in (&ships, &transforms).join() {
             let ship_polygon = ship_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);
-            for (collider, _) in (&colliders, !&landing_plateforms).join() {
+            for (collider, _, _) in (&colliders, !&landing_plateforms, !&bullets).join() {
                 let struct_polygons = collider.polygons();
                 if !ship_resource.is_exploding && are_colliding(&ship_polygon, struct_polygons) {
                     ship_resource.is_exploding = true;

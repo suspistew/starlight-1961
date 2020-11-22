@@ -27,6 +27,8 @@ use crate::systems::explosion_systems::ExplosionSystem;
 use crate::utils::starlight_tile::StartLightTile;
 use amethyst_tiles::MortonEncoder;
 use amethyst_tiles::RenderTiles2D;
+use crate::systems::canon_system::CanonSystem;
+use crate::systems::bullet_system::BulletSystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -55,7 +57,6 @@ fn main() -> amethyst::Result<()> {
                 )
                 .with_plugin(RenderUi::default())
                 .with_plugin(RenderFlat2D::default())
-                .with_plugin(RenderTiles2D::<StartLightTile, MortonEncoder>::default()),
         )?
         .with(
             ShipSystem,
@@ -80,6 +81,16 @@ fn main() -> amethyst::Result<()> {
         .with(
             ExplosionSystem::new(),
             "explosion_system",
+            &[],
+        )
+        .with(
+            CanonSystem::default(),
+            "canon_system",
+            &[],
+        )
+        .with(
+            BulletSystem,
+            "bullet_system",
             &[],
         )
         ;
