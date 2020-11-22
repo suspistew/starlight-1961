@@ -8,7 +8,7 @@ use amethyst::core::ecs::world::Index;
 use rand::{random, Rng};
 use crate::utils::Direction;
 use crate::resources::main_resource::MainResource;
-use crate::utils::sprite_to_entities::init_bullet_collider;
+use crate::utils::sprites::sprite_to_entities::init_bullet_collider;
 
 pub struct CanonSystem {
     shooting_timers: HashMap<u32, f32>

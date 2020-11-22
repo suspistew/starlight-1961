@@ -1,5 +1,5 @@
-pub mod sprite_to_entities;
 pub mod starlight_tile;
+pub mod sprites;
 
 #[derive(Debug)]
 pub struct Point2D {

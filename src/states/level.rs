@@ -11,7 +11,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use crate::entities::ship::{Ship, ShipParent, Thrusters};
 use crate::resources::main_resource::{MainResource, MainSprites};
-use crate::utils::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon};
+use crate::utils::sprites::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon};
 use crate::entities::collision::{Transparent, LandingPlatform};
 use amethyst::utils::application_root_dir;
 use amethyst::core::math::{Point3, Vector3};
@@ -19,6 +19,8 @@ use amethyst::core::ecs::hibitset::BitSetLike;
 use crate::utils::starlight_tile::StartLightTile;
 use amethyst_tiles::{TileMap, MortonEncoder2D};
 use std::borrow::Borrow;
+use crate::utils::sprites::plasma_doors::is_plasma_door_part;
+use crate::entities::doors::{PlasmaDoor, DoorState};
 
 pub const SCREEN_HEIGHT: f32 = 576.0;
 pub const SCREEN_WIDTH: f32 = 704.0;
@@ -43,14 +45,14 @@ impl SimpleState for LevelState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let level = read_level(1);
         let world = data.world;
-        //let misc_spritesheet_handle = load_misc_spritesheet(world);
+        let misc_spritesheet_handle = load_misc_spritesheet(world);
         let level_spritesheet_handle = load_level_spritesheet(world, 1);
         let ship_spritesheet_handle = load_ship_spritesheet(world);
         let bullet_spritesheet_handle = load_bullets_spritesheet(world);
         let ship_explosion_handle = load_explosion_spritesheet(world);
 
         initialize_level_tileset(world, level_spritesheet_handle, &level);
-        initialize_colliders_with_entitites(world, &level);
+        initialize_colliders_with_entitites(world, &level, misc_spritesheet_handle);
         let ship = initialize_ship(world, &level, ship_spritesheet_handle);
         initialize_camera(world, &level, ship);
         let mut ship_resource = MainResource::new_from_level(Some(level));
@@ -106,14 +108,21 @@ fn load_texture(world: &mut World, image: &str, config: &str) -> Handle<SpriteSh
     )
 }
 
-fn initialize_colliders_with_entitites(world: &mut World, level: &LevelConfig) {
+fn initialize_colliders_with_entitites(world: &mut World, level: &LevelConfig, sprite_sheet_handle: Handle<SpriteSheet>) {
     for (point, sprite) in level.tiles.borrow() {
         let collider = sprite_to_colliders(*sprite, point.x as f32 * TILE_SIZE, point.y as f32 * TILE_SIZE);
         if collider.is_some() {
             let mut builder = world
                 .create_entity()
                 .with(collider.unwrap());
-
+            if is_plasma_door_part(*sprite) {
+                let mut transform = Transform::default();
+                transform.set_translation_xyz(point.x as f32 * TILE_SIZE, point.y as f32 * TILE_SIZE,0.6);
+                builder = builder.with(PlasmaDoor{ initial_sprite: *sprite, state: DoorState::Closed }).with(SpriteRender {
+                    sprite_sheet: sprite_sheet_handle.clone(),
+                    sprite_number: *sprite,
+                }).with(transform);
+            }
             if is_landing_platform_start(*sprite) { builder = builder.with(LandingPlatform); }
             if let Some(canon) = sprite_to_canon(*sprite, point.x as usize, point.y as usize) {builder = builder.with(canon); }
             builder.build();
@@ -261,7 +270,8 @@ fn get_z_from_layer_name(name: &str) -> usize{
     match name {
         "Structures" => 0,
         "Entities" => 1,
-        "Background" => 2,
+        "Interactives" => 2,
+        "Background" => 3,
         _ => 99
     }
 }

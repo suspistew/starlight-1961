@@ -2,6 +2,8 @@ use crate::entities::collision::{Collider, Colliders};
 use crate::utils::{Point2D, Direction};
 use crate::entities::canons::{Canon, CanonKind};
 use crate::states::level::TILE_SIZE;
+use crate::utils::sprites::plasma_doors::*;
+
 
 pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<Colliders> {
     match sprite_nb {
@@ -54,6 +56,10 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
             let basemen_collider = Collider::new(Point2D { x: pos_x+ 32., y: pos_y -4. }, -14., -24.);
             let canon_collider = Collider::new(Point2D { x: pos_x + 18., y: pos_y -14. }, -18., -8.);
             return Some(Colliders::from_vec(vec![basemen_collider, canon_collider]));
+        },
+        CLOSED_PLASMA_LEFT| CLOSED_PLASMA_RIGHT| CLOSED_PLASMA_TOP| CLOSED_PLASMA_BOTTOM| HORIZONTAL_PLASMA_0_A| HORIZONTAL_PLASMA_0_B| HORIZONTAL_PLASMA_1_A| HORIZONTAL_PLASMA_1_B| HORIZONTAL_PLASMA_2_A| HORIZONTAL_PLASMA_2_B| HORIZONTAL_PLASMA_3_A| HORIZONTAL_PLASMA_3_B=> {
+            let door_collider = Collider::new(Point2D { x: pos_x, y: pos_y -10. }, 32., -8.);
+            return Some(Colliders::from_vec(vec![door_collider]));
         }
         _ => {}
     };

@@ -2,8 +2,8 @@
     axes: {
  	},
     actions: {
-        "power": [ [Key(Z)]],
-        "rotate_right": [ [Key(D)]],
-        "rotate_left": [ [Key(Q)]]
+        "power": [ [Key(Up)]],
+        "rotate_right": [ [Key(Right)]],
+        "rotate_left": [ [Key(Left)]]
     },
 )

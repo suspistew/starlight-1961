@@ -12,6 +12,7 @@ use amethyst::core::ecs::storage::MaskedStorage;
 use amethyst_tiles::{TileMap, MortonEncoder2D};
 use crate::utils::starlight_tile::StartLightTile;
 use crate::entities::canons::Bullet;
+use crate::entities::doors::{PlasmaDoor, DoorState};
 
 pub struct CollisionSystem;
 
@@ -19,6 +20,7 @@ impl<'s> System<'s> for CollisionSystem {
     type SystemData = (
         ReadStorage<'s, Colliders>,
         ReadStorage<'s, LandingPlatform>,
+        ReadStorage<'s, PlasmaDoor>,
         ReadStorage<'s, ShipParent>,
         WriteStorage<'s, Transform>,
         Write<'s, MainResource>,
@@ -28,28 +30,26 @@ impl<'s> System<'s> for CollisionSystem {
         Entities<'s>
     );
 
-    fn run(&mut self, (colliders, landing_plateforms, ships, mut transforms, mut ship_resource, mut explosions, mut sprite_renders, bullets, entities): Self::SystemData) {
-        let mut explosion_information = (false, 0., 0.);
+    fn run(&mut self, (colliders, landing_plateforms,plasma_doors, ships, mut transforms, mut ship_resource, mut explosions, mut sprite_renders, bullets, entities): Self::SystemData) {
         for (_ship, transform) in (&ships, &transforms).join() {
             let ship_polygon = ship_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);
-            for (collider, _, _) in (&colliders, !&landing_plateforms, !&bullets).join() {
+            for (collider, _, _, _) in (&colliders, !&landing_plateforms, !&bullets, !&plasma_doors).join() {
                 let struct_polygons = collider.polygons();
                 if !ship_resource.is_exploding && are_colliding(&ship_polygon, struct_polygons) {
-                    ship_resource.is_exploding = true;
-                    explosion_information = (true, transform.translation().x, transform.translation().y);
+                    ship_resource.ship_life  -= ship_resource.ship_life;
                 }
             }
-        }
-
-        if explosion_information.0 {
-            let mut explosion_transform = Transform::default();
-            explosion_transform.set_translation_xyz(explosion_information.1, explosion_information.2, 0.9);
-            entities
-                .build_entity()
-                .with(Explosion, &mut explosions)
-                .with(init_sprite_render(ship_resource.sprites.as_ref().unwrap().explosion_sprite_render.clone()), &mut sprite_renders)
-                .with(explosion_transform, &mut transforms)
-                .build();
+            for (collider, door) in (&colliders, &plasma_doors).join() {
+                match door.state {
+                    DoorState::Closed=> {
+                        let struct_polygons = collider.polygons();
+                        if !ship_resource.is_exploding && are_colliding(&ship_polygon, struct_polygons) {
+                            ship_resource.ship_life -= ship_resource.ship_life;
+                        }
+                    },
+                    _ => {}
+                }
+            }
         }
     }
 }

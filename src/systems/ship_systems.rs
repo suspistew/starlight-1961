@@ -84,6 +84,7 @@ impl<'s> System<'s> for ShipSystem {
         }
 
         if main_resource.ship_life <= 0 {
+            main_resource.is_exploding = true;
             let mut explosion_transform = Transform::default();
             explosion_transform.set_translation_xyz(ship_transform.0, ship_transform.1, 0.9);
             entities

@@ -4,7 +4,7 @@ use amethyst::core::{Transform, Time};
 use crate::utils::Direction;
 use crate::entities::collision::{Colliders, are_colliding};
 use geo::Polygon;
-use crate::utils::sprite_to_entities::init_bullet_collider;
+use crate::utils::sprites::sprite_to_entities::init_bullet_collider;
 use std::ops::Deref;
 use crate::resources::main_resource::MainResource;
 use crate::entities::ship::ShipParent;

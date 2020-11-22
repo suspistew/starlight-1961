@@ -36,20 +36,10 @@ impl <'s> System<'s> for LandingSystem {
                         ship_resource.y_force = 0.;
                         ship_resource.x_force = 0.;
                     }else{
-                        if ship_resource.y_force < 0.{ ship_resource.is_exploding = true; explosion_information = (true, transform.translation().x, transform.translation().y); }
+                        if ship_resource.y_force < 0.{ ship_resource.ship_life  -= ship_resource.ship_life; }
                     }
                 }
             }
-        }
-        if explosion_information.0 {
-            let mut explosion_transform = Transform::default();
-            explosion_transform.set_translation_xyz(explosion_information.1, explosion_information.2, 0.9);
-            entities
-                .build_entity()
-                .with(Explosion, &mut explosions)
-                .with(init_sprite_render(ship_resource.sprites.as_ref().unwrap().explosion_sprite_render.clone()), &mut sprites)
-                .with(explosion_transform, &mut transforms)
-                .build();
         }
     }
 }
