@@ -6,7 +6,7 @@ use amethyst::core::Time;
 use rand::Rng;
 use crate::utils::sprites::plasma_doors::{plasma_door_next_sprite, plasma_door_close_sprite};
 
-const timing_change_sprite:f32 = 0.1;
+const timing_change_sprite:f32 = 0.2;
 
 pub struct PlasmaDoorSystem {
     sprite_changing_timer: f32,

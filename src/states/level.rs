@@ -21,7 +21,7 @@ use amethyst_tiles::{TileMap, MortonEncoder2D};
 use std::borrow::Borrow;
 use crate::utils::sprites::plasma_doors::is_plasma_door_part;
 use crate::entities::doors::{PlasmaDoor, DoorState};
-use amethyst::ui::{UiCreator, TtfFormat, UiTransform, Anchor, UiText,UiImage, LineMode};
+use amethyst::ui::{UiCreator, TtfFormat, UiTransform, Anchor, UiText, UiImage, LineMode, ScaleMode};
 use amethyst::renderer::palette::Srgba;
 
 pub const SCREEN_HEIGHT: f32 = 576.0;
@@ -302,28 +302,29 @@ fn initialise_level_and_power_ui(world: &mut World) {
         (),
         &world.read_resource(),
     );
-    let level_nb_transform = UiTransform::new(
+    let mut level_nb_transform = UiTransform::new(
         "level".to_string(),
-        Anchor::BottomMiddle,
-        Anchor::BottomMiddle,
-        220.,
-        7.,
+        Anchor::BottomLeft,
+        Anchor::BottomLeft,
+        0.63488636363,
+        0.01104166666,
         10.,
-        200.,
-        50.,
+        0.04119318181,
+        0.03451388888,
     );
+    level_nb_transform.scale_mode = ScaleMode::Percent;
 
-    let power_nb_transform = UiTransform::new(
+    let mut power_nb_transform = UiTransform::new(
         "power".to_string(),
-        Anchor::BottomMiddle,
-        Anchor::BottomMiddle,
-        490.,
-        7.,
+        Anchor::BottomLeft,
+        Anchor::BottomLeft,
+        0.82954545454,
+        0.01104166666,
         10.,
-        200.,
-        50.,
+        0.04119318181,
+        0.03451388888,
     );
-
+    power_nb_transform.scale_mode = ScaleMode::Percent;
     world
         .create_entity()
         .with(level_nb_transform)
@@ -331,7 +332,7 @@ fn initialise_level_and_power_ui(world: &mut World) {
             font.clone(),
             "01".to_string(),
             [r, g, b, a],
-            35.,
+            40.,
             LineMode::Single,
             Anchor::Middle,
         ))
@@ -344,7 +345,7 @@ fn initialise_level_and_power_ui(world: &mut World) {
             font.clone(),
             "000".to_string(),
             [r, g, b, a],
-            35.,
+            40.,
             LineMode::Single,
             Anchor::Middle,
         ))
@@ -355,16 +356,17 @@ fn initialise_level_and_power_ui(world: &mut World) {
 fn initialise_life_and_fuel_ui(world: &mut World) {
     let power_spritesheet_handle = load_power_spritesheet(world);
     for life_point in 0..3 {
-        let life_point_transform = UiTransform::new(
+        let mut life_point_transform = UiTransform::new(
             format!("life_{}", life_point.to_string()),
             Anchor::BottomLeft,
             Anchor::BottomLeft,
-            252. + (life_point as f32 * 24.),
-            14.,
+            0.17755681818 + (life_point as f32 * (0.00426136363 + 0.01420454545 )),
+            0.01215277777,
             10.,
-            20.,
-            48.,
+            0.01420454545,
+            0.04166666666,
         );
+        life_point_transform.scale_mode = ScaleMode::Percent;
         world
             .create_entity()
             .with(life_point_transform)
@@ -376,17 +378,18 @@ fn initialise_life_and_fuel_ui(world: &mut World) {
             .build();
     }
 
-    for fuel_point in 0..11 {
-        let fuel_point_transform = UiTransform::new(
+    for fuel_point in 0..10 {
+        let mut fuel_point_transform = UiTransform::new(
             format!("fuel_{}", fuel_point.to_string()),
             Anchor::BottomLeft,
             Anchor::BottomLeft,
-            456. + (fuel_point as f32 * 24.),
-            14.,
+            0.32244318181 + (fuel_point as f32 * (0.00426136363 + 0.01420454545 )),
+            0.01215277777,
             10.,
-            20.,
-            48.,
+            0.01420454545,
+            0.04166666666,
         );
+        fuel_point_transform.scale_mode = ScaleMode::Percent;
         world
             .create_entity()
             .with(fuel_point_transform)

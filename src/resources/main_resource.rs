@@ -44,7 +44,7 @@ impl MainResource {
             current_level_config,
             sprites: None,
             ship_life: 3,
-            ship_fuel: 11. * 50.
+            ship_fuel: 10. * 50.
         }
     }
 
@@ -65,7 +65,7 @@ impl MainResource {
         self.is_exploding = false;
         self.should_be_reset = false;
         self.ship_life = 3;
-        self.ship_fuel = 11. * 50.;
+        self.ship_fuel = 10. * 50.;
     }
 
     pub fn power(&mut self, delta_time: f32,  rotation: &UnitQuaternion<f32>) {
