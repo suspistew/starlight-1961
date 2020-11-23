@@ -1,14 +1,13 @@
 use amethyst::core::ecs::{System, WriteStorage, ReadStorage, Read, Join, Write, Entities};
 use amethyst::core::{Transform, Time};
-use crate::entities::ship::{Ship, ShipParent, Thrusters};
+use crate::entities::ship::{Ship, ShipParent};
 use amethyst::input::{InputHandler, StringBindings};
 use amethyst::renderer::{SpriteRender, SpriteSheet};
 use crate::resources::main_resource::MainResource;
 use amethyst::core::num::FloatConst;
-use std::panic::resume_unwind;
-use crate::states::level::TILE_SIZE;
 use crate::entities::explosion::Explosion;
 use amethyst::assets::Handle;
+use crate::utils::sprites::TILE_SIZE;
 
 pub struct ShipSystem;
 
@@ -74,7 +73,7 @@ impl<'s> System<'s> for ShipSystem {
                 let config = main_resource.level_config();
                 transform.set_translation_xyz(
                     config.start_x as f32 * TILE_SIZE - 16.,
-                    ((config.height - config.start_y) as f32 * TILE_SIZE),
+                    (config.height - config.start_y) as f32 * TILE_SIZE,
                     0.04,
                 );
                 main_resource.reset();

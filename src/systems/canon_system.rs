@@ -1,14 +1,10 @@
 use amethyst::core::ecs::{System, WriteStorage, ReadStorage, Entities, Join, Read};
-use crate::entities::collision::Colliders;
 use amethyst::core::{Transform, Time};
-use crate::entities::canons::{Canon, Bullet, CanonKind};
+use crate::entities::canons::{Canon, Bullet};
 use amethyst::renderer::SpriteRender;
 use std::collections::HashMap;
-use amethyst::core::ecs::world::Index;
-use rand::{random, Rng};
-use crate::utils::Direction;
+use rand::Rng;
 use crate::resources::main_resource::MainResource;
-use crate::utils::sprites::sprite_to_entities::init_bullet_collider;
 
 pub struct CanonSystem {
     shooting_timers: HashMap<u32, f32>
@@ -37,7 +33,7 @@ impl<'s> System<'s> for CanonSystem {
         for (canon, entity) in (&canons, &entities).join() {
             *self.shooting_timers.entry(entity.id())
                 .or_insert(rand::thread_rng().gen_range(0.1, 2.5)) -= time.delta_seconds();
-            let mut val = self.shooting_timers.get(&entity.id()).unwrap();
+            let val = self.shooting_timers.get(&entity.id()).unwrap();
             if val <= &0. {
                 let mut bullet_transform = Transform::default();
                 bullet_transform.set_translation_xyz(canon.bullet_x_start, canon.bullet_y_start, 0.9);

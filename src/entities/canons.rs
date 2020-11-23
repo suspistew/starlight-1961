@@ -2,7 +2,7 @@ use amethyst::core::ecs::{DenseVecStorage, Component};
 use crate::utils::Direction;
 #[derive(Debug)]
 pub enum CanonKind {
-    Bullet, Plasma, Air
+    Bullet, _Plasma, _Air
 }
 #[derive(Debug)]
 pub struct Canon {

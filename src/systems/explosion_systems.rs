@@ -25,7 +25,7 @@ impl <'s> System<'s> for ExplosionSystem {
         Entities<'s>,
     );
 
-    fn run(&mut self, (explosions, mut sprites, time, mut ship_resource, mut entities): Self::SystemData) {
+    fn run(&mut self, (explosions, mut sprites, time, mut ship_resource, entities): Self::SystemData) {
         if ship_resource.should_be_reset { return; }
         for (_, sprite, entity) in (&explosions, &mut sprites, &*entities).join() {
             if self.sprite_update_timer.is_none() {

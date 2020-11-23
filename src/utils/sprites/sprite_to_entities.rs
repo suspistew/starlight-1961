@@ -1,8 +1,8 @@
 use crate::entities::collision::{Collider, Colliders};
 use crate::utils::{Point2D, Direction};
 use crate::entities::canons::{Canon, CanonKind};
-use crate::states::level::TILE_SIZE;
 use crate::utils::sprites::plasma_doors::*;
+use crate::utils::sprites::TILE_SIZE;
 
 
 pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<Colliders> {
@@ -67,7 +67,7 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
     None
 }
 
-pub fn init_bullet_collider(kind: CanonKind, x: f32, y: f32 ) -> Colliders {
+pub fn init_bullet_collider(_kind: CanonKind, x: f32, y: f32 ) -> Colliders {
     let bullet_collider = Collider::new(Point2D { x: x + 16., y: y - 16. }, 4., -4.);
     Colliders::from_vec(vec![bullet_collider])
 }

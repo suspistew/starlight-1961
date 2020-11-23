@@ -1,16 +1,8 @@
-use amethyst::core::ecs::{System, ReadStorage, Write, Join, Entities, WriteStorage};
+use amethyst::core::ecs::{System, ReadStorage, Write, Join};
 use crate::entities::collision::{Colliders, LandingPlatform, are_colliding};
 use crate::entities::ship::ShipParent;
 use amethyst::core::Transform;
 use crate::resources::main_resource::MainResource;
-use geo::algorithm::intersects::Intersects;
-use geo::Polygon;
-use crate::entities::explosion::Explosion;
-use amethyst::renderer::{SpriteRender, SpriteSheet};
-use amethyst::assets::Handle;
-use amethyst::core::ecs::storage::MaskedStorage;
-use amethyst_tiles::{TileMap, MortonEncoder2D};
-use crate::utils::starlight_tile::StartLightTile;
 use crate::entities::canons::Bullet;
 use crate::entities::doors::{PlasmaDoor, DoorState};
 
@@ -22,15 +14,12 @@ impl<'s> System<'s> for CollisionSystem {
         ReadStorage<'s, LandingPlatform>,
         ReadStorage<'s, PlasmaDoor>,
         ReadStorage<'s, ShipParent>,
-        WriteStorage<'s, Transform>,
+        ReadStorage<'s, Transform>,
         Write<'s, MainResource>,
-        WriteStorage<'s, Explosion>,
-        WriteStorage<'s, SpriteRender>,
-        ReadStorage<'s, Bullet>,
-        Entities<'s>
+        ReadStorage<'s, Bullet>
     );
 
-    fn run(&mut self, (colliders, landing_plateforms,plasma_doors, ships, mut transforms, mut ship_resource, mut explosions, mut sprite_renders, bullets, entities): Self::SystemData) {
+    fn run(&mut self, (colliders, landing_plateforms,plasma_doors, ships, transforms, mut ship_resource, bullets): Self::SystemData) {
         for (_ship, transform) in (&ships, &transforms).join() {
             let ship_polygon = ship_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);
             for (collider, _, _, _) in (&colliders, !&landing_plateforms, !&bullets, !&plasma_doors).join() {
@@ -51,13 +40,6 @@ impl<'s> System<'s> for CollisionSystem {
                 }
             }
         }
-    }
-}
-
-fn init_sprite_render(sprite_sheet_handle: Handle<SpriteSheet>) -> SpriteRender {
-    SpriteRender {
-        sprite_sheet: sprite_sheet_handle,
-        sprite_number: 0,
     }
 }
 

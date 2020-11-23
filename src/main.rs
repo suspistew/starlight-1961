@@ -19,18 +19,15 @@ use amethyst::{
 use crate::states::level::LevelState;
 use crate::systems::ship_systems::ShipSystem;
 use crate::systems::collision_system::CollisionSystem;
-use crate::entities::ship::Thrusters;
 use crate::systems::thruster_system::ThrustersSystem;
 use crate::systems::landing_system::LandingSystem;
 use amethyst::renderer::palette::Srgba;
 use crate::systems::explosion_systems::ExplosionSystem;
-use crate::utils::starlight_tile::StartLightTile;
-use amethyst_tiles::MortonEncoder;
-use amethyst_tiles::RenderTiles2D;
 use crate::systems::canon_system::CanonSystem;
 use crate::systems::bullet_system::BulletSystem;
 use crate::systems::doors::plasma_door_system::PlasmaDoorSystem;
 use crate::systems::ui_system::UISystem;
+use amethyst::core::frame_limiter::FrameRateLimitStrategy;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -102,11 +99,11 @@ fn main() -> amethyst::Result<()> {
         UISystem,
         "ui_system",
         &[],
-    )
-        ;
+    );
 
-    let mut game = Application::new(resources, LevelState, game_data)?;
+    let mut game = Application::build(resources, LevelState)?
+        .with_frame_limit(FrameRateLimitStrategy::Sleep, 60)
+        .build(game_data)?;
     game.run();
-
     Ok(())
 }

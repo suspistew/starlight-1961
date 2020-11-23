@@ -1,5 +1,5 @@
 use rand::Rng;
-use crate::states::level::{LevelConfig, TILE_SIZE};
+use crate::states::level::{LevelConfig};
 use crate::entities::collision::{Colliders, Collider};
 use crate::utils::Point2D;
 use geo::Polygon;

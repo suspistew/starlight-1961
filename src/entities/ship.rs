@@ -1,5 +1,4 @@
 use amethyst::ecs::prelude::{Component, DenseVecStorage};
-use rand::Rng;
 
 pub struct ShipParent;
 
@@ -19,9 +18,15 @@ impl Component for Thrusters {
     type Storage = DenseVecStorage<Self>;
 }
 
-pub struct ShipPower;
+pub struct ShipPowerLeftNumber;
 
-impl Component for ShipPower {
+impl Component for ShipPowerLeftNumber {
+    type Storage = DenseVecStorage<Self>;
+}
+
+pub struct ShipPowerRightNumber;
+
+impl Component for ShipPowerRightNumber {
     type Storage = DenseVecStorage<Self>;
 }
 

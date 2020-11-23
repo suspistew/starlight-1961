@@ -1,13 +1,10 @@
-use amethyst::core::ecs::{System, ReadStorage, Write, Entities, Join, WriteStorage};
+use amethyst::core::ecs::{System, ReadStorage, Write, Join};
 use crate::entities::collision::{Colliders, LandingPlatform, are_colliding};
 use crate::entities::ship::ShipParent;
 use amethyst::core::Transform;
 use crate::resources::main_resource::MainResource;
 use crate::systems::ship_systems::ANGLE_ROTATION_DEGREE_MODIFIER;
-use crate::states::level::TILE_SIZE;
-use crate::entities::explosion::Explosion;
-use amethyst::renderer::{SpriteRender, SpriteSheet};
-use amethyst::assets::Handle;
+use crate::utils::sprites::TILE_SIZE;
 
 pub struct LandingSystem;
 
@@ -16,15 +13,11 @@ impl <'s> System<'s> for LandingSystem {
         ReadStorage<'s, Colliders>,
         ReadStorage<'s, LandingPlatform>,
         ReadStorage<'s, ShipParent>,
-        WriteStorage<'s, Transform>,
-        Write<'s, MainResource>,
-        WriteStorage<'s, Explosion>,
-        WriteStorage<'s, SpriteRender>,
-        Entities<'s>,
+        ReadStorage<'s, Transform>,
+        Write<'s, MainResource>
     );
 
-    fn run(&mut self, (colliders, landing_plateforms, ships, mut transforms, mut ship_resource, mut explosions, mut sprites, entities): Self::SystemData) {
-        let mut explosion_information = (false, 0., 0.);
+    fn run(&mut self, (colliders, landing_plateforms, ships, transforms, mut ship_resource): Self::SystemData) {
         for (_ship, transform) in (&ships, &transforms).join() {
             let ship_polygon = ship_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);
             for (collider, _) in (&colliders, &landing_plateforms).join() {
@@ -58,11 +51,4 @@ fn correct_landing_position(ship_resource: &MainResource, transform: &Transform,
     && ship_x + OVERFLOW_TOLERANCE >= plateform_x_start
     && (ship_x + TILE_SIZE - OVERFLOW_TOLERANCE) <= plateform_x_end
 
-}
-
-fn init_sprite_render(sprite_sheet_handle: Handle<SpriteSheet>) -> SpriteRender {
-    SpriteRender {
-        sprite_sheet: sprite_sheet_handle,
-        sprite_number: 0,
-    }
 }

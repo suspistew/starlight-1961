@@ -5,7 +5,6 @@ use crate::utils::Direction;
 use crate::entities::collision::{Colliders, are_colliding};
 use geo::Polygon;
 use crate::utils::sprites::sprite_to_entities::init_bullet_collider;
-use std::ops::Deref;
 use crate::resources::main_resource::MainResource;
 use crate::entities::ship::ShipParent;
 
@@ -32,7 +31,7 @@ impl<'s> System<'s> for BulletSystem {
             let colliders = init_bullet_collider(CanonKind::Bullet, transform.translation().x, transform.translation().y);
             if are_colliding(colliders.polygons(), &ship_polygon) {
                 main_resource.ship_life -= 1;
-                entities.delete(entity);
+                let _res = entities.delete(entity);
             }else{
                 bullet_vec.push((entity.id(), colliders.polygons().clone()));
             }
@@ -46,7 +45,7 @@ impl<'s> System<'s> for BulletSystem {
             for (id, polygons) in bullet_vec.iter(){
                 if are_colliding(&polygons, platform_collider.polygons()) {
                     let e = entities.entity(*id);
-                    entities.delete(e);
+                    let _res = entities.delete(e);
                 }
             }
         }
