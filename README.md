@@ -1,6 +1,8 @@
-# Startlight 1961
+<p align="center">
+  <img width="704" height="148" src="https://github.com/grzi/starlight-1961/blob/main/assets/sprites/logo.png?raw=true">
+</p>
 
-**Oh, no !**
+**Welcome, to Starlight 1961 !**
 
 All the cheese is gone... What will people eat ?! 
 You need to save the world. Quick, take a space ship, and go to the moon, everybody knows that the moon is 
