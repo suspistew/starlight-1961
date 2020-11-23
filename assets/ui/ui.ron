@@ -1,0 +1,16 @@
+#![enable(implicit_some)]
+Image(
+            transform: (
+                id: "ui",
+                x: 0.,
+                y: 0.,
+                z: 9.,
+                width: 1.,
+                height: 1.,
+                tab_order: 1,
+                anchor: Middle,
+                mouse_reactive: false,
+                percent: true
+            ),
+            image: Texture(File("ui/ui_image.png", ("IMAGE", ()))),
+        )

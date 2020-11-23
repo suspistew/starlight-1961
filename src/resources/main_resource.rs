@@ -7,6 +7,7 @@ use amethyst::core::math::UnitQuaternion;
 use amethyst::core::alga::linear::Similarity;
 use amethyst::assets::Handle;
 use amethyst::renderer::SpriteSheet;
+use core::cmp;
 
 pub struct MainResource {
     pub x_force: f32,
@@ -20,7 +21,8 @@ pub struct MainResource {
     current_level_config: Option<LevelConfig>,
     pub sprites: Option<MainSprites>,
 
-    pub ship_life: usize,
+    pub ship_life: u8,
+    pub ship_fuel: f32,
 }
 
 pub struct MainSprites {
@@ -41,7 +43,8 @@ impl MainResource {
             should_be_reset: false,
             current_level_config,
             sprites: None,
-            ship_life: 3
+            ship_life: 3,
+            ship_fuel: 11. * 50.
         }
     }
 
@@ -62,19 +65,35 @@ impl MainResource {
         self.is_exploding = false;
         self.should_be_reset = false;
         self.ship_life = 3;
+        self.ship_fuel = 11. * 50.;
     }
 
     pub fn power(&mut self, delta_time: f32,  rotation: &UnitQuaternion<f32>) {
         self.is_landed = false;
         self.y_force += delta_time * calculate_y_force(rotation.rotation().quaternion().k);
         self.x_force += delta_time * calculate_x_force(rotation.rotation().quaternion().k);
+        self.ship_fuel -= cmp::max(self.power, 40) as f32 * delta_time;
         self.power += 1;
+    }
+
+    pub fn fuel_up(&mut self, delta_time: f32) {
+        self.ship_fuel += 100. * delta_time;
+        if self.ship_fuel > 500. {
+            self.ship_fuel = 500.;
+        }
     }
 
     pub fn apply_gravity(&mut self, delta_time: f32) {
         if self.is_landed {return;}
         self.y_force -= 1.5 * delta_time;
-        // TODO : Add x force lose
+        if self.x_force > 0. {
+            self.x_force -= 0.2 * delta_time;
+            if self.x_force < 0. { self.x_force = 0.}
+        }else if self.x_force < 0. {
+            self.x_force += 0.2 * delta_time;
+            if self.x_force > 0. { self.x_force = 0.}
+        }
+
         self.power = 0;
     }
 

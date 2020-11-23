@@ -35,7 +35,8 @@ impl<'s> System<'s> for ShipSystem {
             if main_resource.should_be_reset{ transform.set_rotation_z_axis(0.); break; }
             if main_resource.is_exploding { if true { sprite_render.sprite_number = 5 } return; }
             sprite_render.sprite_number = main_resource.sprite_nb();
-            if let Some(true) = input.action_is_down("power") {
+            let power = input.action_is_down("power");
+            if main_resource.ship_fuel > 0. && power.is_some() && power.unwrap()  {
                 main_resource.power(time.delta_seconds(), transform.rotation());
             } else {
                 main_resource.apply_gravity(time.delta_seconds());
@@ -54,6 +55,7 @@ impl<'s> System<'s> for ShipSystem {
                     }
                 }
             }else{
+                main_resource.fuel_up(time.delta_seconds());
                 if main_resource.current_rotation_angle > 0. {
                     transform.prepend_rotation_z_axis(-1. * angle_rotation_modifier_bind_to_pi());
                     main_resource.current_rotation_angle -= ANGLE_ROTATION_DEGREE_MODIFIER;

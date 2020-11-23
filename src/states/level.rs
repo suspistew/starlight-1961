@@ -9,7 +9,7 @@ use std::fs::File;
 use serde_json::from_reader;
 use serde::Deserialize;
 use std::collections::HashMap;
-use crate::entities::ship::{Ship, ShipParent, Thrusters};
+use crate::entities::ship::{Ship, ShipParent, Thrusters, ShipPower, ShipLife, ShipFuel};
 use crate::resources::main_resource::{MainResource, MainSprites};
 use crate::utils::sprites::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon};
 use crate::entities::collision::{Transparent, LandingPlatform};
@@ -21,6 +21,8 @@ use amethyst_tiles::{TileMap, MortonEncoder2D};
 use std::borrow::Borrow;
 use crate::utils::sprites::plasma_doors::is_plasma_door_part;
 use crate::entities::doors::{PlasmaDoor, DoorState};
+use amethyst::ui::{UiCreator, TtfFormat, UiTransform, Anchor, UiText,UiImage, LineMode};
+use amethyst::renderer::palette::Srgba;
 
 pub const SCREEN_HEIGHT: f32 = 576.0;
 pub const SCREEN_WIDTH: f32 = 704.0;
@@ -35,6 +37,9 @@ const CONFIG_SHIP: &str = "sprites/space_ship.ron";
 
 const IMAGE_BULLETS: &str = "sprites/bullets.png";
 const CONFIG_BULLETS: &str = "sprites/bullets.ron";
+
+const IMAGE_POWER: &str = "sprites/power.png";
+const CONFIG_POWER: &str = "sprites/power.ron";
 
 const IMAGE_EXPLOSION: &str = "sprites/explosion.png";
 const CONFIG_EXPLOSION: &str = "sprites/explosion.ron";
@@ -58,11 +63,20 @@ impl SimpleState for LevelState {
         let mut ship_resource = MainResource::new_from_level(Some(level));
         ship_resource.sprites = Some(MainSprites { explosion_sprite_render: ship_explosion_handle, bullet_sprite_render: bullet_spritesheet_handle });
         world.insert(ship_resource);
+        world.exec(|mut creator: UiCreator<'_>| {
+            creator.create("ui/ui.ron", ());
+        });
+        initialise_level_and_power_ui(world);
+        initialise_life_and_fuel_ui(world);
     }
 }
 
 pub fn load_misc_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
     load_texture(world, IMAGE_MISC, CONFIG_MISC)
+}
+
+pub fn load_power_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
+    load_texture(world, IMAGE_POWER, CONFIG_POWER)
 }
 
 pub fn load_ship_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
@@ -199,7 +213,7 @@ fn initialize_ship(
 
 pub fn initialize_camera(world: &mut World, level_config: &LevelConfig, ship: Entity) {
     let mut transform = Transform::default();
-    transform.set_translation_xyz(0., -100., 1.1);
+    transform.set_translation_xyz(0., 0., 1.1);
     world
         .create_entity()
         .with(Camera::standard_2d(SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -273,6 +287,115 @@ fn get_z_from_layer_name(name: &str) -> usize{
         "Interactives" => 2,
         "Background" => 3,
         _ => 99
+    }
+}
+
+fn initialise_level_and_power_ui(world: &mut World) {
+
+    let (r, g, b, a) = Srgba::new(196. / 255., 240. / 255., 194. / 255., 1.)
+        .into_linear()
+        .into_components();
+
+    let font = world.read_resource::<Loader>().load(
+        "fonts/pixel.ttf",
+        TtfFormat,
+        (),
+        &world.read_resource(),
+    );
+    let level_nb_transform = UiTransform::new(
+        "level".to_string(),
+        Anchor::BottomMiddle,
+        Anchor::BottomMiddle,
+        220.,
+        7.,
+        10.,
+        200.,
+        50.,
+    );
+
+    let power_nb_transform = UiTransform::new(
+        "power".to_string(),
+        Anchor::BottomMiddle,
+        Anchor::BottomMiddle,
+        490.,
+        7.,
+        10.,
+        200.,
+        50.,
+    );
+
+    world
+        .create_entity()
+        .with(level_nb_transform)
+        .with(UiText::new(
+            font.clone(),
+            "01".to_string(),
+            [r, g, b, a],
+            35.,
+            LineMode::Single,
+            Anchor::Middle,
+        ))
+        .build();
+
+    world
+        .create_entity()
+        .with(power_nb_transform)
+        .with(UiText::new(
+            font.clone(),
+            "000".to_string(),
+            [r, g, b, a],
+            35.,
+            LineMode::Single,
+            Anchor::Middle,
+        ))
+        .with(ShipPower)
+        .build();
+}
+
+fn initialise_life_and_fuel_ui(world: &mut World) {
+    let power_spritesheet_handle = load_power_spritesheet(world);
+    for life_point in 0..3 {
+        let life_point_transform = UiTransform::new(
+            format!("life_{}", life_point.to_string()),
+            Anchor::BottomLeft,
+            Anchor::BottomLeft,
+            252. + (life_point as f32 * 24.),
+            14.,
+            10.,
+            20.,
+            48.,
+        );
+        world
+            .create_entity()
+            .with(life_point_transform)
+            .with(ShipLife{ life_point: life_point as u8 + 1 })
+            .with(UiImage::Sprite(SpriteRender {
+                sprite_sheet: power_spritesheet_handle.clone(),
+                sprite_number: 0,
+            }))
+            .build();
+    }
+
+    for fuel_point in 0..11 {
+        let fuel_point_transform = UiTransform::new(
+            format!("fuel_{}", fuel_point.to_string()),
+            Anchor::BottomLeft,
+            Anchor::BottomLeft,
+            456. + (fuel_point as f32 * 24.),
+            14.,
+            10.,
+            20.,
+            48.,
+        );
+        world
+            .create_entity()
+            .with(fuel_point_transform)
+            .with(ShipFuel{ fuel_point: fuel_point as u8 })
+            .with(UiImage::Sprite(SpriteRender {
+                sprite_sheet: power_spritesheet_handle.clone(),
+                sprite_number: 0,
+            }))
+            .build();
     }
 }
 

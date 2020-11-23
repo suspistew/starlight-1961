@@ -6,3 +6,4 @@ pub mod landing_system;
 pub mod canon_system;
 pub mod bullet_system;
 pub mod doors;
+pub mod ui_system;

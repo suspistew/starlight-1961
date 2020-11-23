@@ -30,6 +30,7 @@ use amethyst_tiles::RenderTiles2D;
 use crate::systems::canon_system::CanonSystem;
 use crate::systems::bullet_system::BulletSystem;
 use crate::systems::doors::plasma_door_system::PlasmaDoorSystem;
+use crate::systems::ui_system::UISystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -96,6 +97,10 @@ fn main() -> amethyst::Result<()> {
         ).with(
         PlasmaDoorSystem::default(),
         "plasma_door_system",
+        &[],
+    ).with(
+        UISystem,
+        "ui_system",
         &[],
     )
         ;
