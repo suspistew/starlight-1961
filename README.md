@@ -4,10 +4,49 @@
 
 **Welcome, to Starlight 1961 !**
 
-All the cheese is gone... What will people eat ?! 
-You need to save the world. Quick, take a space ship, and go to the moon, everybody knows that the moon is 
-a big cheese waiting to be eaten.
+In his speech in september 1962, JFK told 
+> "Within these last 19 months at least 45 satellites have circled the earth"
 
-Another problem, we don't have enough fuel for your trip, you'll need to stop in space satellites to fill up.
+You take place in the space ship named "Starlight 1961", that delivers things and stuff to some of these satellites. 
+Will you be able to land on each one of them ?
 
-Be carefull, we aren't the only ones that want the cheese from the moon, so you may encounter bad guys...
+Have fun !
+
+## Contributing
+
+Contributions are welcome. 
+
+### How to build
+
+**Linux** users may install some dependencies so as to compile the project
+```bash
+sudo apt install libasound2-dev libxcb-shape0-dev libxcb-xfixes0-dev
+```
+
+**MacOs** users have to install xcode.
+
+
+To build the project, Windows and Linux users has to explicitly choose `"vulkan"` with the following command:
+```bash
+cargo build --features "vulkan"
+```
+MacOs users may explicitly choose `"metal"` with the following command:
+
+```bash
+cargo build --features "vulkan"
+```
+### How to run
+
+Windows and Linux users has to explicitly choose `"vulkan"` with the following command:
+
+```bash
+cargo run --features "vulkan"
+```
+
+MacOs users may explicitly choose `"metal"` with the following command:
+
+```bash
+cargo run --features "metal"
+```
+
+### Credits 

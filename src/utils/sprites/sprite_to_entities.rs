@@ -76,6 +76,10 @@ pub fn is_landing_platform_start(sprite_nb: usize) -> bool{
     sprite_nb == LANDING_PLATFORM || sprite_nb == STARTING_PLATFORM
 }
 
+pub fn is_arrival(sprite_nb: usize) -> bool{
+    sprite_nb == LANDING_PLATFORM
+}
+
 pub fn sprite_to_canon(sprite_nb: usize, x: usize, y: usize) -> Option<Canon>{
     match sprite_nb {
         CANON_1_TO_LEFT => Some(Canon{ direction: Direction::Left, kind: CanonKind::Bullet, bullet_x_start: (x as f32  * TILE_SIZE ) - 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),

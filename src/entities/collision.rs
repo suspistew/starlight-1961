@@ -9,6 +9,12 @@ impl Component for LandingPlatform {
     type Storage = DenseVecStorage<Self>;
 }
 
+pub struct Arrival;
+
+impl Component for Arrival {
+    type Storage = DenseVecStorage<Self>;
+}
+
 pub struct Transparent;
 
 impl Component for Transparent {

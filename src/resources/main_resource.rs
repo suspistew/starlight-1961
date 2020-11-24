@@ -1,5 +1,5 @@
 use rand::Rng;
-use crate::states::level::{LevelConfig};
+use crate::states::level_state::{LevelConfig};
 use crate::entities::collision::{Colliders, Collider};
 use crate::utils::Point2D;
 use geo::Polygon;
@@ -17,12 +17,14 @@ pub struct MainResource {
     pub is_landed: bool,
     pub is_exploding: bool,
     pub should_be_reset: bool,
+    pub victory: bool,
     _gravity: f32,
     current_level_config: Option<LevelConfig>,
+    pub current_level: usize,
     pub sprites: Option<MainSprites>,
-
     pub ship_life: u8,
     pub ship_fuel: f32,
+    pub should_reset_plasma_timers: bool
 }
 
 pub struct MainSprites {
@@ -31,11 +33,12 @@ pub struct MainSprites {
 }
 
 impl MainResource {
-    fn new(x_force: f32, y_force: f32, gravity: f32, current_level_config: Option<LevelConfig>) -> MainResource {
+    fn new(x_force: f32, y_force: f32, gravity: f32, current_level_config: Option<LevelConfig>, lvl_nb: usize) -> MainResource {
         MainResource {
             x_force,
             y_force,
             _gravity: gravity,
+            victory: false,
             current_rotation_angle: 0.,
             power: 0,
             is_landed: true,
@@ -44,7 +47,9 @@ impl MainResource {
             current_level_config,
             sprites: None,
             ship_life: 3,
-            ship_fuel: 10. * 50.
+            current_level: lvl_nb,
+            ship_fuel: 10. * 50.,
+            should_reset_plasma_timers: true
         }
     }
 
@@ -52,8 +57,8 @@ impl MainResource {
         &(self.current_level_config.as_ref().unwrap())
     }
 
-    pub fn new_from_level(config: Option<LevelConfig>) -> MainResource {
-        MainResource::new (0., 0., 1.0, config)
+    pub fn new_from_level(config: Option<LevelConfig>, lvl_nb: usize) -> MainResource {
+        MainResource::new (0., 0., 1.0, config, lvl_nb)
     }
 
     pub fn reset(&mut self) {
@@ -114,7 +119,7 @@ impl MainResource {
 
 impl Default for MainResource {
     fn default() -> Self {
-        MainResource::new(0., 0., 0., None)
+        MainResource::new(0., 0., 0., None, 0)
     }
 }
 

@@ -1,9 +1,10 @@
-use amethyst::core::ecs::{System, WriteStorage, Entities, Read, Join};
+use amethyst::core::ecs::{System, WriteStorage, Entities, Read, Join, Write};
 use crate::entities::doors::{PlasmaDoor, DoorState};
 use amethyst::renderer::SpriteRender;
 use std::collections::HashMap;
 use amethyst::core::Time;
 use crate::utils::sprites::plasma_doors::{plasma_door_next_sprite, plasma_door_close_sprite};
+use crate::resources::main_resource::MainResource;
 
 const TIMING_CHANGE_SPRITE:f32 = 0.1;
 
@@ -28,9 +29,15 @@ impl<'s> System<'s> for PlasmaDoorSystem {
         WriteStorage<'s, PlasmaDoor>,
         WriteStorage<'s, SpriteRender>,
         Read<'s, Time>,
-        Entities<'s>);
+        Entities<'s>,
+        Write<'s, MainResource>);
 
-    fn run(&mut self, (mut doors, mut sprites, time, entities): Self::SystemData) {
+    fn run(&mut self, (mut doors, mut sprites, time, entities, mut main_resource): Self::SystemData) {
+        if main_resource.should_reset_plasma_timers {
+            self.sprite_changing_timer= TIMING_CHANGE_SPRITE;
+            self.door_timers= HashMap::new();
+            main_resource.should_reset_plasma_timers = false;
+        }
         self.sprite_changing_timer -= time.delta_seconds();
         for (door, entity, sprite) in (&mut doors, &entities, &mut sprites).join(){
             *self.door_timers.entry(entity.id())

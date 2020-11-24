@@ -27,8 +27,10 @@ use crate::systems::bullet_system::BulletSystem;
 use crate::systems::doors::plasma_door_system::PlasmaDoorSystem;
 use crate::systems::ui_system::UISystem;
 use amethyst::core::frame_limiter::FrameRateLimitStrategy;
-use crate::states::main_menu::MainMenuState;
+use crate::states::main_menu_state::MainMenuState;
 use crate::systems::menu_background_system::MenuBackgroundSystem;
+use crate::systems::score_system::ScoreSystem;
+use crate::states::CurrentState;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -59,50 +61,54 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderFlat2D::default())
         )?
         .with(
-            ShipSystem,
+            ShipSystem.pausable(CurrentState::Level),
             "ship_system",
             &["input_system"],
         )
         .with(
-            CollisionSystem,
+            CollisionSystem.pausable(CurrentState::Level),
             "collision_system",
             &[],
         )
         .with(
-            ThrustersSystem,
+            ThrustersSystem.pausable(CurrentState::Level),
             "thrusters_system",
             &[],
         )
         .with(
-            LandingSystem,
+            LandingSystem.pausable(CurrentState::Level),
             "landing_system",
             &[],
         )
         .with(
-            ExplosionSystem::new(),
+            ExplosionSystem::new().pausable(CurrentState::Level),
             "explosion_system",
             &[],
         )
         .with(
-            CanonSystem::default(),
+            CanonSystem::default().pausable(CurrentState::Level),
             "canon_system",
             &[],
         )
         .with(
-            BulletSystem,
+            BulletSystem.pausable(CurrentState::Level),
             "bullet_system",
             &[],
         ).with(
-        PlasmaDoorSystem::default(),
+        PlasmaDoorSystem::default().pausable(CurrentState::Level),
         "plasma_door_system",
         &[],
     ).with(
-        UISystem,
+        UISystem.pausable(CurrentState::Level),
         "ui_system",
         &[],
     ).with(
-        MenuBackgroundSystem::default(),
+        MenuBackgroundSystem::default().pausable(CurrentState::MainMenu),
         "menu_background_system",
+        &[],
+    ).with(
+        ScoreSystem.pausable(CurrentState::Level),
+        "score_system",
         &[],
     );
 

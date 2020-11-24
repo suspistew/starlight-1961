@@ -8,3 +8,4 @@ pub mod bullet_system;
 pub mod doors;
 pub mod ui_system;
 pub mod menu_background_system;
+pub mod score_system;

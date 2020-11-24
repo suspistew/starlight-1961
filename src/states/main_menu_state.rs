@@ -7,8 +7,9 @@ use amethyst::core::Transform;
 use amethyst::core::ecs::{World, WorldExt, Builder};
 use crate::entities::main_menu::{MenuBackground, PushEnter};
 use crate::entities::ship::Ship;
-use crate::states::level::LevelState;
 use amethyst::input::{is_key_down, VirtualKeyCode};
+use crate::states::CurrentState;
+use crate::states::next_level::NextLevelState;
 
 pub struct MainMenuState;
 
@@ -16,6 +17,7 @@ impl SimpleState for MainMenuState {
 
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
+        *world.write_resource::<CurrentState>() = CurrentState::MainMenu;
         world.exec(|mut creator: UiCreator<'_>| {
             creator.create("ui/title.ron", ());
         });
@@ -42,7 +44,7 @@ impl SimpleState for MainMenuState {
     ) -> SimpleTrans {
         if let StateEvent::Window(event) = event {
             if is_key_down(&event, VirtualKeyCode::Return) {
-                return Trans::Switch(Box::new(LevelState));
+                return Trans::Switch(Box::new(NextLevelState{ next_level_nb: 1 }));
             }
         }
         Trans::None
@@ -50,6 +52,7 @@ impl SimpleState for MainMenuState {
 
     fn on_stop(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         data.world.delete_all();
+        *data.world.write_resource::<CurrentState>() = CurrentState::MainMenu;
     }
 }
 

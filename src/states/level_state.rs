@@ -1,4 +1,4 @@
-use amethyst::{SimpleState, StateData, GameData};
+use amethyst::{SimpleState, StateData, GameData, Trans, SimpleTrans};
 use amethyst::core::ecs::{World, WorldExt, Builder, Entity};
 use amethyst::renderer::{SpriteSheet, SpriteRender, Camera};
 use amethyst::core::{Transform, Parent};
@@ -10,8 +10,8 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use crate::entities::ship::{Ship, ShipParent, Thrusters, ShipPowerLeftNumber, ShipLife, ShipFuel, ShipPowerRightNumber};
 use crate::resources::main_resource::{MainResource, MainSprites};
-use crate::utils::sprites::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon};
-use crate::entities::collision::LandingPlatform;
+use crate::utils::sprites::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon, is_arrival};
+use crate::entities::collision::{LandingPlatform, Arrival};
 use amethyst::utils::application_root_dir;
 use amethyst::core::math::Point3;
 use std::borrow::Borrow;
@@ -19,34 +19,68 @@ use crate::utils::sprites::plasma_doors::is_plasma_door_part;
 use crate::entities::doors::{PlasmaDoor, DoorState};
 use amethyst::ui::{UiCreator, UiTransform, Anchor, UiImage, ScaleMode};
 use crate::utils::sprites::*;
+use crate::states::CurrentState;
+use crate::states::next_level::NextLevelState;
+use crate::states::end_state::EndLevelState;
 
-pub struct LevelState;
+pub struct LevelState{
+    pub level_nb: usize
+}
+
+const MAX_LVL: usize = 2;
 
 impl SimpleState for LevelState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        let level = read_level(1);
         let world = data.world;
-        let misc_spritesheet_handle = load_misc_spritesheet(world);
-        let level_spritesheet_handle = load_level_spritesheet(world, 1);
-        let ship_spritesheet_handle = load_ship_spritesheet(world);
-        let bullet_spritesheet_handle = load_bullets_spritesheet(world);
-        let ship_explosion_handle = load_explosion_spritesheet(world);
-        let numbers_spritesheet_handle = load_numbers_spritesheet(world);
-
-        initialize_level_tileset(world, level_spritesheet_handle, &level);
-        initialize_colliders_with_entitites(world, &level, misc_spritesheet_handle);
-        let ship = initialize_ship(world, &level, ship_spritesheet_handle);
-        initialize_camera(world, ship);
-        let mut ship_resource = MainResource::new_from_level(Some(level));
-        ship_resource.sprites = Some(MainSprites { explosion_sprite_render: ship_explosion_handle, bullet_sprite_render: bullet_spritesheet_handle });
-        world.insert(ship_resource);
-        world.exec(|mut creator: UiCreator<'_>| {
-            creator.create("ui/ui.ron", ());
-        });
-        initialise_level_ui(world, numbers_spritesheet_handle.clone());
-        initialise_power_ui(world, numbers_spritesheet_handle);
-        initialise_life_and_fuel_ui(world);
+        *world.write_resource::<CurrentState>() = CurrentState::Level;
+        load_level(self.level_nb, world);
     }
+
+    fn on_stop(&mut self, data: StateData<'_, GameData<'_, '_>>) {
+        data.world.delete_all();
+        *data.world.write_resource::<CurrentState>() = CurrentState::Level;
+    }
+
+    fn fixed_update(&mut self, data: StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
+        let world = data.world;
+        let (victory, current_level) = {
+            let resource = world.read_resource::<MainResource>();
+            (resource.victory, resource.current_level)
+        };
+        if victory {
+            let new_level =current_level + 1;
+            if new_level <= MAX_LVL {
+                return Trans::Switch(Box::new(NextLevelState{ next_level_nb: new_level }));
+            }else{
+                return Trans::Switch(Box::new(EndLevelState));
+            }
+        }
+        return Trans::None;
+    }
+}
+
+fn load_level(lvl_number: usize, world: &mut World) {
+    let level = read_level(lvl_number);
+    let misc_spritesheet_handle = load_misc_spritesheet(world);
+    let level_spritesheet_handle = load_level_spritesheet(world, 1);
+    let ship_spritesheet_handle = load_ship_spritesheet(world);
+    let bullet_spritesheet_handle = load_bullets_spritesheet(world);
+    let ship_explosion_handle = load_explosion_spritesheet(world);
+    let numbers_spritesheet_handle = load_numbers_spritesheet(world);
+
+    initialize_level_tileset(world, level_spritesheet_handle, &level);
+    initialize_colliders_with_entitites(world, &level, misc_spritesheet_handle);
+    let ship = initialize_ship(world, &level, ship_spritesheet_handle);
+    initialize_camera(world, ship);
+    let mut ship_resource = MainResource::new_from_level(Some(level), lvl_number);
+    ship_resource.sprites = Some(MainSprites { explosion_sprite_render: ship_explosion_handle, bullet_sprite_render: bullet_spritesheet_handle });
+    world.insert(ship_resource);
+    world.exec(|mut creator: UiCreator<'_>| {
+        creator.create("ui/ui.ron", ());
+    });
+    initialise_level_ui(world, numbers_spritesheet_handle.clone());
+    initialise_power_ui(world, numbers_spritesheet_handle);
+    initialise_life_and_fuel_ui(world);
 }
 
 fn initialize_colliders_with_entitites(world: &mut World, level: &LevelConfig, sprite_sheet_handle: Handle<SpriteSheet>) {
@@ -65,6 +99,7 @@ fn initialize_colliders_with_entitites(world: &mut World, level: &LevelConfig, s
                 }).with(transform);
             }
             if is_landing_platform_start(*sprite) { builder = builder.with(LandingPlatform); }
+            if is_arrival(*sprite) { builder = builder.with(Arrival); }
             if let Some(canon) = sprite_to_canon(*sprite, point.x as usize, point.y as usize) {builder = builder.with(canon); }
             builder.build();
         }
