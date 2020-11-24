@@ -2,4 +2,5 @@
   title: "Starlight 1961",
   dimensions: Some((704, 576)),
   resizable: false,
+  always_on_top: true,
 )

@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="704" height="148" src="https://github.com/grzi/starlight-1961/blob/main/assets/sprites/logo.png?raw=true">
+  <img width="704" height="148" src="https://github.com/grzi/starlight-1961/blob/main/assets/ui/logo.png?raw=true">
 </p>
 
 **Welcome, to Starlight 1961 !**

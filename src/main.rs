@@ -16,7 +16,6 @@ use amethyst::{
     ui::{RenderUi, UiBundle},
     utils::application_root_dir,
 };
-use crate::states::level::LevelState;
 use crate::systems::ship_systems::ShipSystem;
 use crate::systems::collision_system::CollisionSystem;
 use crate::systems::thruster_system::ThrustersSystem;
@@ -28,6 +27,8 @@ use crate::systems::bullet_system::BulletSystem;
 use crate::systems::doors::plasma_door_system::PlasmaDoorSystem;
 use crate::systems::ui_system::UISystem;
 use amethyst::core::frame_limiter::FrameRateLimitStrategy;
+use crate::states::main_menu::MainMenuState;
+use crate::systems::menu_background_system::MenuBackgroundSystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -99,9 +100,13 @@ fn main() -> amethyst::Result<()> {
         UISystem,
         "ui_system",
         &[],
+    ).with(
+        MenuBackgroundSystem::default(),
+        "menu_background_system",
+        &[],
     );
 
-    let mut game = Application::build(resources, LevelState)?
+    let mut game = Application::build(resources, MainMenuState)?
         .with_frame_limit(FrameRateLimitStrategy::Sleep, 60)
         .build(game_data)?;
     game.run();

@@ -1,4 +1,3 @@
-pub mod starlight_tile;
 pub mod sprites;
 
 #[derive(Debug)]

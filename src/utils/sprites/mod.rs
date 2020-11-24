@@ -14,6 +14,7 @@ const IMAGE_MISC: &str = "sprites/main.png";
 const CONFIG_MISC: &str = "sprites/main.ron";
 
 const IMAGE_SHIP: &str = "sprites/space_ship.png";
+const CONFIG_SHIP_THRUSTERS: &str = "sprites/space_ship_with_thrusters.ron";
 const CONFIG_SHIP: &str = "sprites/space_ship.ron";
 
 const IMAGE_BULLETS: &str = "sprites/bullets.png";
@@ -27,6 +28,14 @@ const CONFIG_NUMBERS: &str = "sprites/numbers.ron";
 
 const IMAGE_EXPLOSION: &str = "sprites/explosion.png";
 const CONFIG_EXPLOSION: &str = "sprites/explosion.ron";
+
+const IMAGE_PUSH_ENTER: &str = "sprites/push_enter.png";
+const CONFIG_PUSH_ENTER: &str = "sprites/push_enter.ron";
+
+const IMAGE_BACKGROUND: &str = "sprites/background.png";
+const IMAGE_BACKGROUND2: &str = "sprites/background2.png";
+const IMAGE_BACKGROUND3: &str = "sprites/background3.png";
+const CONFIG_BACKGROUND: &str = "sprites/background.ron";
 
 
 pub fn load_level_spritesheet(world: &mut World, lvl_number: usize) -> Handle<SpriteSheet> {
@@ -72,6 +81,10 @@ pub fn load_ship_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
     load_texture(world, IMAGE_SHIP, CONFIG_SHIP)
 }
 
+pub fn load_ship_thrusters_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
+    load_texture(world, IMAGE_SHIP, CONFIG_SHIP_THRUSTERS)
+}
+
 pub fn load_bullets_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
     load_texture(world, IMAGE_BULLETS, CONFIG_BULLETS)
 }
@@ -82,4 +95,20 @@ pub fn load_explosion_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
 
 pub fn load_numbers_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
     load_texture(world, IMAGE_NUMBERS, CONFIG_NUMBERS)
+}
+
+pub fn load_background(world: &mut World) -> Handle<SpriteSheet> {
+    load_texture(world, IMAGE_BACKGROUND, CONFIG_BACKGROUND)
+}
+
+pub fn load_background_2(world: &mut World) -> Handle<SpriteSheet> {
+    load_texture(world, IMAGE_BACKGROUND2, CONFIG_BACKGROUND)
+}
+
+pub fn load_background_3(world: &mut World) -> Handle<SpriteSheet> {
+    load_texture(world, IMAGE_BACKGROUND3, CONFIG_BACKGROUND)
+}
+
+pub fn load_push_enter(world: &mut World) -> Handle<SpriteSheet> {
+    load_texture(world, IMAGE_PUSH_ENTER, CONFIG_PUSH_ENTER)
 }

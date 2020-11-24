@@ -1,0 +1,12 @@
+/*!
+    @import /amethyst_rendy/src/sprite/mod.rs#Sprites
+    Sprites
+*/
+
+#![enable(implicit_some)]
+Grid((
+    texture_width: 704,
+    texture_height: 800,
+    columns: 1,
+    rows: 1,
+))

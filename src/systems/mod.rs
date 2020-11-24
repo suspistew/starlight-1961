@@ -7,3 +7,4 @@ pub mod canon_system;
 pub mod bullet_system;
 pub mod doors;
 pub mod ui_system;
+pub mod menu_background_system;
