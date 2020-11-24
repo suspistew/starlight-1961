@@ -47,6 +47,38 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
             let platform_collider = Collider::new(Point2D { x: pos_x, y: pos_y }, 64., -32.);
             return Some(Colliders::from_vec(vec![platform_collider]));
         },
+        DIAG_TOP_LEFT_TO_BOT_RIGHT_WALL => {
+            return Some(Colliders::from_points(
+                Point2D{ x: pos_x , y: pos_y },
+                Point2D{ x: pos_x + 32. , y: pos_y -32.},
+                Point2D{ x: pos_x + 24., y: pos_y -32.},
+                Point2D{ x: pos_x , y: pos_y - 8. },
+            ));
+        },
+        DIAG_TOP_RIGHT_TO_BOT_LEFT_WALL => {
+            return Some(Colliders::from_points(
+                Point2D{ x: pos_x + 32., y: pos_y },
+                Point2D{ x: pos_x + 32. , y: pos_y -8.},
+                Point2D{ x: pos_x + 8., y: pos_y -32.},
+                Point2D{ x: pos_x , y: pos_y - 32. },
+            ));
+        },
+        DIAG_BOT_LEFT_TO_TOP_RIGHT_WALL => {
+            return Some(Colliders::from_points(
+                Point2D{ x: pos_x , y: pos_y-24. },
+                Point2D{ x: pos_x + 24. , y: pos_y},
+                Point2D{ x: pos_x + 32., y: pos_y},
+                Point2D{ x: pos_x , y: pos_y - 32. },
+            ));
+        },
+        DIAG_BOT_RIGHT_TO_TOP_LEFT_WALL => {
+            return Some(Colliders::from_points(
+                Point2D{ x: pos_x , y: pos_y },
+                Point2D{ x: pos_x + 8. , y: pos_y},
+                Point2D{ x: pos_x + 32., y: pos_y -24.},
+                Point2D{ x: pos_x +32., y: pos_y - 32. },
+            ));
+        },
         CANON_1_TO_LEFT => {
             let basemen_collider = Collider::new(Point2D { x: pos_x, y: pos_y -4. }, 14., -24.);
             let canon_collider = Collider::new(Point2D { x: pos_x + 14., y: pos_y -14. }, 18., -8.);
@@ -111,6 +143,11 @@ const RIGHT_WALL: usize = 42;
 const BOTTOM_LEFT_WALL: usize = 50;
 const BOTTOM_WALL: usize = 51;
 const BOTTOM_RIGHT_WALL: usize = 52;
+const DIAG_TOP_LEFT_TO_BOT_RIGHT_WALL: usize = 34;
+const DIAG_TOP_RIGHT_TO_BOT_LEFT_WALL: usize = 33;
+const DIAG_BOT_LEFT_TO_TOP_RIGHT_WALL: usize = 44;
+const DIAG_BOT_RIGHT_TO_TOP_LEFT_WALL: usize = 43;
+
 
 const CANON_1_TO_LEFT: usize = 18;
 const CANON_1_TO_RIGHT: usize = 8;

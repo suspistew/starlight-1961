@@ -19,7 +19,7 @@ impl <'s> System<'s> for LandingSystem {
 
     fn run(&mut self, (colliders, landing_plateforms, ships, transforms, mut ship_resource): Self::SystemData) {
         for (_ship, transform) in (&ships, &transforms).join() {
-            let ship_polygon = ship_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);
+            let ship_polygon = ship_resource.get_colliders_polygons_for_landing(transform.translation().x, transform.translation().y);
             for (collider, _) in (&colliders, &landing_plateforms).join() {
 
                 let struct_polygons = collider.polygons();
@@ -45,9 +45,9 @@ fn correct_landing_position(ship_resource: &MainResource, transform: &Transform,
     let plateform_x_end = colliders.colliders().get(0).unwrap().top_right_point().x;
 
     ship_resource.power == 0
-        && ship_resource.y_force > -1.0
-        && ship_resource.current_rotation_angle > -8. * ANGLE_ROTATION_DEGREE_MODIFIER
-        && ship_resource.current_rotation_angle < 8. * ANGLE_ROTATION_DEGREE_MODIFIER
+        && ship_resource.y_force > -1.2
+        && ship_resource.current_rotation_angle > -9. * ANGLE_ROTATION_DEGREE_MODIFIER
+        && ship_resource.current_rotation_angle < 9. * ANGLE_ROTATION_DEGREE_MODIFIER
     && ship_x + OVERFLOW_TOLERANCE >= plateform_x_start
     && (ship_x + TILE_SIZE - OVERFLOW_TOLERANCE) <= plateform_x_end
 

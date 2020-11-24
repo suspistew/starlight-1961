@@ -31,6 +31,16 @@ impl Colliders {
     pub fn from_vec(colliders: Vec<Collider>) -> Colliders {
         Colliders { polygons: colliders.iter().map(|collider| collider.to_polygon()).collect(), colliders }
     }
+    pub fn from_points(a: Point2D, b: Point2D, c: Point2D ,d: Point2D ) -> Colliders {
+        Colliders { polygons: vec![
+            Polygon::new(
+                LineString::from(
+                    vec![(a.x, a.y), (b.x, b.y), (c.x, c.y), (d.x, d.y), (a.x, a.y)]
+                ),
+                vec![],
+            )
+        ], colliders: Vec::new() }
+    }
 
     pub fn polygons(&self) -> &Vec<Polygon<f32>> {
         &self.polygons

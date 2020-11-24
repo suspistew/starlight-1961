@@ -18,7 +18,7 @@ impl<'s> System<'s> for ScoreSystem {
     fn run(&mut self, (colliders, ships, transforms, arrivals, mut main_resource): Self::SystemData) {
         if main_resource.is_landed {
             for (_ship, transform) in (&ships, &transforms).join() {
-                let ship_polygon = main_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);
+                let ship_polygon = main_resource.get_colliders_polygons_for_landing(transform.translation().x, transform.translation().y);
                 for (collider, _) in (&colliders, &arrivals).join() {
                     let struct_polygons = collider.polygons();
                     if are_colliding(&ship_polygon, struct_polygons) {

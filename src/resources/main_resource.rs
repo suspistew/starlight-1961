@@ -112,7 +112,13 @@ impl MainResource {
         self.bullet_hit_timer = 0.3;
     }
 
-    pub fn get_colliders_polygons(&self, x: f32, y:f32) -> Vec<Polygon<f32>> {
+    pub fn get_colliders_polygons_for_collision(&self, x: f32, y:f32) -> Vec<Polygon<f32>> {
+        let main_collider = Collider::new(Point2D{x: x+2., y: y-2.}, 28., -28.);
+        let colliders = Colliders::from_vec(vec![main_collider]);
+        colliders.to_owned_polygons()
+    }
+
+    pub fn get_colliders_polygons_for_landing(&self, x: f32, y:f32) -> Vec<Polygon<f32>> {
         let main_collider = Collider::new(Point2D{x, y}, 32., -32.);
         let colliders = Colliders::from_vec(vec![main_collider]);
         colliders.to_owned_polygons()

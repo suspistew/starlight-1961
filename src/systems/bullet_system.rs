@@ -24,7 +24,7 @@ impl<'s> System<'s> for BulletSystem {
     fn run(&mut self, (mut bullets, canons, mut transforms, colliders, ships,mut main_resource, time, entities): Self::SystemData) {
         let mut ship_polygon = Vec::new();
         for (_ship, transform) in (&ships, &transforms).join() {
-            ship_polygon = main_resource.get_colliders_polygons(transform.translation().x, transform.translation().y);
+            ship_polygon = main_resource.get_colliders_polygons_for_collision(transform.translation().x, transform.translation().y);
         }
         let mut bullet_vec: Vec<(u32, Vec<Polygon<f32>>)> = Vec::new();
         for (bullet, transform, entity) in (&mut bullets, &mut transforms, &entities).join() {
