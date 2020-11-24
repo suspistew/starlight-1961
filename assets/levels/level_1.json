@@ -1,4 +1,15 @@
 { "compressionlevel":-1,
+ "properties":[
+  {
+   "name":"start_x",
+   "type":"int",
+   "value":4
+  },
+  {
+   "name":"start_y",
+   "type":"int",
+   "value":28
+  }],
  "editorsettings":
     {
      "export":
@@ -72,7 +83,5 @@
  "tilewidth":16,
  "type":"map",
  "version":1.4,
- "width":30,
- "start_x": 4,
- "start_y": 28
+ "width":30
 }

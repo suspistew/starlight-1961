@@ -57,6 +57,14 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
             let canon_collider = Collider::new(Point2D { x: pos_x + 18., y: pos_y -14. }, -18., -8.);
             return Some(Colliders::from_vec(vec![basemen_collider, canon_collider]));
         },
+        CANON_2_TO_LEFT => {
+            let canon_collider = Collider::new(Point2D { x: pos_x, y: pos_y -8. }, 32., -16.);
+            return Some(Colliders::from_vec(vec![canon_collider]));
+        },
+        CANON_3_TO_LEFT => {
+            let canon_collider = Collider::new(Point2D { x: pos_x, y: pos_y -8. }, 32., -16.);
+            return Some(Colliders::from_vec(vec![canon_collider]));
+        },
         CLOSED_PLASMA_LEFT| CLOSED_PLASMA_RIGHT| CLOSED_PLASMA_TOP| CLOSED_PLASMA_BOTTOM| HORIZONTAL_PLASMA_0_A| HORIZONTAL_PLASMA_0_B| HORIZONTAL_PLASMA_1_A| HORIZONTAL_PLASMA_1_B| HORIZONTAL_PLASMA_2_A| HORIZONTAL_PLASMA_2_B| HORIZONTAL_PLASMA_3_A| HORIZONTAL_PLASMA_3_B=> {
             let door_collider = Collider::new(Point2D { x: pos_x, y: pos_y -10. }, 32., -8.);
             return Some(Colliders::from_vec(vec![door_collider]));
@@ -67,9 +75,12 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
     None
 }
 
-pub fn init_bullet_collider(_kind: CanonKind, x: f32, y: f32 ) -> Colliders {
-    let bullet_collider = Collider::new(Point2D { x: x + 16., y: y - 16. }, 4., -4.);
-    Colliders::from_vec(vec![bullet_collider])
+pub fn init_bullet_collider(kind: &CanonKind, x: f32, y: f32 ) -> Colliders {
+    match kind {
+        CanonKind::Air =>  Colliders::from_vec(vec![Collider::new(Point2D { x, y }, 12., -28.)]),
+        _=> Colliders::from_vec(vec![Collider::new(Point2D { x: x + 16., y: y - 16. }, 4., -4.)])
+    }
+
 }
 
 pub fn is_landing_platform_start(sprite_nb: usize) -> bool{
@@ -86,6 +97,8 @@ pub fn sprite_to_canon(sprite_nb: usize, x: usize, y: usize) -> Option<Canon>{
         CANON_1_TO_RIGHT =>Some(Canon{ direction: Direction::Right, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ) + 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
         CANON_1_TO_TOP => Some(Canon{ direction: Direction::Top, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ) , bullet_y_start: (y as f32 * TILE_SIZE)}),
         CANON_1_TO_BOTTOM => Some(Canon{ direction: Direction::Bottom, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ), bullet_y_start: (y as f32 * TILE_SIZE)}),
+        CANON_2_TO_LEFT => Some(Canon{ direction: Direction::Left, kind: CanonKind::Smg, bullet_x_start: (x as f32  * TILE_SIZE ) - 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
+        CANON_3_TO_LEFT => Some(Canon{ direction: Direction::Left, kind: CanonKind::Air, bullet_x_start: (x as f32  * TILE_SIZE ) - 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
         _ => None
     }
 }
@@ -103,6 +116,13 @@ const CANON_1_TO_LEFT: usize = 18;
 const CANON_1_TO_RIGHT: usize = 8;
 const CANON_1_TO_TOP: usize = 17;
 const CANON_1_TO_BOTTOM: usize = 7;
+
+const CANON_2_TO_LEFT: usize = 28;
+const CANON_2_TO_RIGHT: usize = 27;
+
+
+const CANON_3_TO_LEFT: usize = 48;
+const CANON_3_TO_RIGHT: usize = 47;
 
 const LANDING_PLATFORM: usize = 90;
 const STARTING_PLATFORM: usize = 92;

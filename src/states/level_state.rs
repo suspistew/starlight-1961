@@ -62,7 +62,7 @@ impl SimpleState for LevelState {
 fn load_level(lvl_number: usize, world: &mut World) {
     let level = read_level(lvl_number);
     let misc_spritesheet_handle = load_misc_spritesheet(world);
-    let level_spritesheet_handle = load_level_spritesheet(world, 1);
+    let level_spritesheet_handle = load_level_spritesheet(world, lvl_number);
     let ship_spritesheet_handle = load_ship_spritesheet(world);
     let bullet_spritesheet_handle = load_bullets_spritesheet(world);
     let ship_explosion_handle = load_explosion_spritesheet(world);
@@ -78,7 +78,7 @@ fn load_level(lvl_number: usize, world: &mut World) {
     world.exec(|mut creator: UiCreator<'_>| {
         creator.create("ui/ui.ron", ());
     });
-    initialise_level_ui(world, numbers_spritesheet_handle.clone());
+    initialise_level_ui(world, numbers_spritesheet_handle.clone(), lvl_number);
     initialise_power_ui(world, numbers_spritesheet_handle);
     initialise_life_and_fuel_ui(world);
 }
@@ -235,8 +235,8 @@ impl LevelConfig {
         LevelConfig{
             height: level.height,
             width: level.width,
-            start_x: level.start_x,
-            start_y: level.start_y,
+            start_x: level.properties.iter().filter(|e| e.name == "start_x".to_string()).next().unwrap().value as u32,
+            start_y: level.properties.iter().filter(|e| e.name == "start_y".to_string()).next().unwrap().value as u32,
             tiles
         }
     }
@@ -300,8 +300,8 @@ fn initialise_power_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
         .build();
 }
 
-fn initialise_level_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
-
+fn initialise_level_ui(world: &mut World, spritesheet: Handle<SpriteSheet>, lvl_number: usize) {
+    let level_sprites = format_lvl_number(lvl_number);
     let mut level_nb_left_transform = UiTransform::new(
         "level_left".to_string(),
         Anchor::BottomLeft,
@@ -319,7 +319,7 @@ fn initialise_level_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
         .with(level_nb_left_transform)
         .with(UiImage::Sprite(SpriteRender {
             sprite_sheet: spritesheet.clone(),
-            sprite_number: 0,
+            sprite_number: level_sprites.0,
         })
         )
         .build();
@@ -342,10 +342,18 @@ fn initialise_level_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
         .with(level_nb_right_transform)
         .with(UiImage::Sprite(SpriteRender {
             sprite_sheet: spritesheet.clone(),
-            sprite_number: 1,
+            sprite_number: level_sprites.1,
         })
         )
         .build();
+}
+
+fn format_lvl_number(lvl_number: usize) -> (usize, usize) {
+    let lvl_nb_str = lvl_number.to_string();
+    if lvl_nb_str.len() > 1 {
+        return (lvl_nb_str[..1].parse().unwrap(), lvl_nb_str[1..2].parse().unwrap());
+    }
+    (0, lvl_nb_str.parse().unwrap())
 }
 
 fn initialise_life_and_fuel_ui(world: &mut World) {
@@ -401,9 +409,14 @@ fn initialise_life_and_fuel_ui(world: &mut World) {
 pub struct TiledLevel {
     pub height: u32,
     pub width: u32,
-    pub start_x: u32,
-    pub start_y: u32,
     pub layers: Vec<TiledLayer>,
+    pub properties: Vec<TiledPropery>
+}
+
+#[derive(Debug, Deserialize)]
+pub struct TiledPropery{
+    pub name: String,
+    pub value: usize
 }
 
 #[derive(Debug, Deserialize)]
