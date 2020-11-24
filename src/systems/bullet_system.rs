@@ -35,9 +35,8 @@ impl<'s> System<'s> for BulletSystem {
                         main_resource.x_force -= 2. * time.delta_seconds();
                     },
                     _=> {
-                        if main_resource.ship_life > 0 {
-                            main_resource.ship_life -= 1;
-                        }
+                        main_resource.bullet_hit();
+
                         let _res = entities.delete(entity);
                     }
                 }

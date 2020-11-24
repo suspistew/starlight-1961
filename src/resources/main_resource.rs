@@ -24,7 +24,8 @@ pub struct MainResource {
     pub sprites: Option<MainSprites>,
     pub ship_life: u8,
     pub ship_fuel: f32,
-    pub should_reset_plasma_timers: bool
+    pub should_reset_plasma_timers: bool,
+    pub bullet_hit_timer: f32
 }
 
 pub struct MainSprites {
@@ -49,7 +50,8 @@ impl MainResource {
             ship_life: 3,
             current_level: lvl_nb,
             ship_fuel: 10. * 50.,
-            should_reset_plasma_timers: true
+            should_reset_plasma_timers: true,
+            bullet_hit_timer: 0.
         }
     }
 
@@ -71,6 +73,7 @@ impl MainResource {
         self.should_be_reset = false;
         self.ship_life = 3;
         self.ship_fuel = 10. * 50.;
+        self.bullet_hit_timer = 0.;
     }
 
     pub fn power(&mut self, delta_time: f32,  rotation: &UnitQuaternion<f32>) {
@@ -102,6 +105,13 @@ impl MainResource {
         self.power = 0;
     }
 
+    pub fn bullet_hit(&mut self){
+        if self.ship_life > 0 {
+            self.ship_life -= 1;
+        }
+        self.bullet_hit_timer = 0.3;
+    }
+
     pub fn get_colliders_polygons(&self, x: f32, y:f32) -> Vec<Polygon<f32>> {
         let main_collider = Collider::new(Point2D{x, y}, 32., -32.);
         let colliders = Colliders::from_vec(vec![main_collider]);
@@ -110,8 +120,14 @@ impl MainResource {
 
     pub fn sprite_nb(&self) -> usize {
         if self.power == 0 {
+            if self.bullet_hit_timer > 0. {
+                return 4;
+            }
             0
         } else {
+            if self.bullet_hit_timer > 0. {
+                return 9;
+            }
             rand::thread_rng().gen_range(1, 4) as usize
         }
     }

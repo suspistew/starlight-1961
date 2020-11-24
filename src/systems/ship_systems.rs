@@ -30,6 +30,9 @@ impl<'s> System<'s> for ShipSystem {
     );
 
     fn run(&mut self, (mut transforms, ships, ships_parent, input, mut sprites, mut main_resource, time,mut explosions,  entities): Self::SystemData) {
+        if main_resource.bullet_hit_timer > 0. {
+            main_resource.bullet_hit_timer -= time.delta_seconds();
+        }
         for (_, transform, sprite_render) in (&ships, &mut transforms, &mut sprites).join() {
             if main_resource.should_be_reset{ transform.set_rotation_z_axis(0.); break; }
             if main_resource.is_exploding { if true { sprite_render.sprite_number = 5 } return; }
