@@ -110,9 +110,13 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
 pub fn init_bullet_collider(kind: &CanonKind, x: f32, y: f32 ) -> Colliders {
     match kind {
         CanonKind::Air =>  Colliders::from_vec(vec![Collider::new(Point2D { x, y }, 12., -28.)]),
-        _=> Colliders::from_vec(vec![Collider::new(Point2D { x: x + 16., y: y - 16. }, 4., -4.)])
+        _=> Colliders::from_vec(vec![Collider::new(Point2D { x: x + 14., y: y - 16. }, 6., -4.)])
     }
 
+}
+
+pub fn init_blade_saw_collider(x: f32, y: f32) -> Colliders {
+    Colliders::from_vec(vec![Collider::new(Point2D { x: x + 2., y: y - 2. }, 28., -28.)])
 }
 
 pub fn is_landing_platform_start(sprite_nb: usize) -> bool{
@@ -125,8 +129,8 @@ pub fn is_arrival(sprite_nb: usize) -> bool{
 
 pub fn sprite_to_canon(sprite_nb: usize, x: usize, y: usize) -> Option<Canon>{
     match sprite_nb {
-        CANON_1_TO_LEFT => Some(Canon{ direction: Direction::Left, kind: CanonKind::Bullet, bullet_x_start: (x as f32  * TILE_SIZE ) - 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
-        CANON_1_TO_RIGHT =>Some(Canon{ direction: Direction::Right, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ) + 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
+        CANON_1_TO_LEFT => Some(Canon{ direction: Direction::Left, kind: CanonKind::Bullet, bullet_x_start: (x as f32  * TILE_SIZE ) - 16., bullet_y_start: (y as f32 * TILE_SIZE) - 2.  }),
+        CANON_1_TO_RIGHT =>Some(Canon{ direction: Direction::Right, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ) + 16., bullet_y_start: (y as f32 * TILE_SIZE) - 2.  }),
         CANON_1_TO_TOP => Some(Canon{ direction: Direction::Top, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ) , bullet_y_start: (y as f32 * TILE_SIZE)}),
         CANON_1_TO_BOTTOM => Some(Canon{ direction: Direction::Bottom, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ), bullet_y_start: (y as f32 * TILE_SIZE)}),
         CANON_2_TO_LEFT => Some(Canon{ direction: Direction::Left, kind: CanonKind::Smg, bullet_x_start: (x as f32  * TILE_SIZE ) - 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
@@ -163,3 +167,5 @@ const CANON_3_TO_RIGHT: usize = 47;
 
 const LANDING_PLATFORM: usize = 90;
 const STARTING_PLATFORM: usize = 92;
+
+pub const BLADE_SAW_SPRITE: usize = 16;

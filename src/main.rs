@@ -31,6 +31,7 @@ use crate::states::main_menu_state::MainMenuState;
 use crate::systems::menu_background_system::MenuBackgroundSystem;
 use crate::systems::score_system::ScoreSystem;
 use crate::states::CurrentState;
+use crate::systems::blade_saw_system::BladeSawSystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -109,6 +110,10 @@ fn main() -> amethyst::Result<()> {
     ).with(
         ScoreSystem.pausable(CurrentState::Level),
         "score_system",
+        &[],
+    ).with(
+        BladeSawSystem.pausable(CurrentState::Level),
+        "blade_saw_system",
         &[],
     );
 

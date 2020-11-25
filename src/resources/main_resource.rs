@@ -1,5 +1,4 @@
 use rand::Rng;
-use crate::states::level_state::{LevelConfig};
 use crate::entities::collision::{Colliders, Collider};
 use crate::utils::Point2D;
 use geo::Polygon;
@@ -8,6 +7,7 @@ use amethyst::core::alga::linear::Similarity;
 use amethyst::assets::Handle;
 use amethyst::renderer::SpriteSheet;
 use core::cmp;
+use crate::utils::level_reader::LevelConfig;
 
 pub struct MainResource {
     pub x_force: f32,

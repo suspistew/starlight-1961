@@ -6,11 +6,10 @@ use amethyst::assets::Handle;
 
 use std::fs::File;
 use serde_json::from_reader;
-use serde::Deserialize;
 use std::collections::HashMap;
 use crate::entities::ship::{Ship, ShipParent, Thrusters, ShipPowerLeftNumber, ShipLife, ShipFuel, ShipPowerRightNumber};
 use crate::resources::main_resource::{MainResource, MainSprites};
-use crate::utils::sprites::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon, is_arrival};
+use crate::utils::sprites::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon, is_arrival, BLADE_SAW_SPRITE};
 use crate::entities::collision::{LandingPlatform, Arrival};
 use amethyst::utils::application_root_dir;
 use amethyst::core::math::Point3;
@@ -22,6 +21,8 @@ use crate::utils::sprites::*;
 use crate::states::CurrentState;
 use crate::states::next_level::NextLevelState;
 use crate::states::end_state::EndLevelState;
+use crate::utils::level_reader::{LevelConfig, read_level};
+use crate::entities::blade_saw::BladeSawSprite;
 
 pub struct LevelState{
     pub level_nb: usize
@@ -93,7 +94,8 @@ fn initialize_colliders_with_entitites(world: &mut World, level: &LevelConfig, s
             if is_plasma_door_part(*sprite) {
                 let mut transform = Transform::default();
                 transform.set_translation_xyz(point.x as f32 * TILE_SIZE, point.y as f32 * TILE_SIZE,0.6);
-                builder = builder.with(PlasmaDoor{ initial_sprite: *sprite, state: DoorState::Closed }).with(SpriteRender {
+                builder = builder.with(PlasmaDoor{ initial_sprite: *sprite, state: DoorState::Closed })
+                    .with(SpriteRender {
                     sprite_sheet: sprite_sheet_handle.clone(),
                     sprite_number: *sprite,
                 }).with(transform);
@@ -104,6 +106,30 @@ fn initialize_colliders_with_entitites(world: &mut World, level: &LevelConfig, s
             builder.build();
         }
     }
+
+    for blade_saw in level.blade_saws.iter() {
+        let mut parent_transform = Transform::default();
+        parent_transform.set_translation_xyz(blade_saw.start_x as f32 * TILE_SIZE, (level.height as f32 - blade_saw.start_y - 1.) as f32 * TILE_SIZE,0.6);
+        let parent = world.create_entity()
+            .with(blade_saw.clone())
+            .with(parent_transform)
+            .build();
+
+
+        let mut transform = Transform::default();
+
+        world
+            .create_entity()
+            .with(BladeSawSprite)
+            .with(SpriteRender {
+                sprite_sheet: sprite_sheet_handle.clone(),
+                sprite_number: BLADE_SAW_SPRITE,
+            })
+            .with(transform)
+            .with(Parent{ entity: parent })
+            .build();
+    }
+
 }
 
 fn initialize_level_tileset(
@@ -182,74 +208,6 @@ pub fn initialize_camera(world: &mut World, ship: Entity) {
         .with(transform)
         .with(Parent { entity: ship })
         .build();
-}
-
-fn read_level(lvl_number: usize) -> LevelConfig {
-    let input_path = format!(
-        "assets/levels/level_{}.json",
-        lvl_number
-    );
-    let app_root = application_root_dir().unwrap();
-    let input_path = app_root.join(input_path.as_str());
-    let f = File::open(&input_path.as_path()).expect("Failed opening file");
-    let res: TiledLevel = match from_reader(f) {
-        Ok(x) => x,
-        Err(e) => {
-            println!("Failed to load level {}: {}", lvl_number, e);
-            std::process::exit(1);
-        }
-    };
-
-    LevelConfig::new(res)
-}
-
-#[derive(Debug, Deserialize)]
-pub struct LevelConfig {
-    pub height: u32,
-    pub width: u32,
-    pub start_x: u32,
-    pub start_y: u32,
-    pub tiles: HashMap<Point3<u32>,usize>
-}
-
-impl LevelConfig {
-    fn new(level: TiledLevel) -> Self {
-        let mut tiles: HashMap<Point3<u32>,usize> = HashMap::new();
-        for layer in level.layers {
-            let z = get_z_from_layer_name(layer.name.as_str());
-            for y in 0..level.height {
-                let line = &layer.data[((y * level.width) as usize)..((y * level.width + level.width) as usize)];
-                for (x, tile) in line.iter().enumerate() {
-                    let (tile_x, tile_y, tile_z) = (x as u32, (level.height - y - 1), z as u32);
-                    let tile_number: i32 = match *tile {
-                        0 => NO_TILE_ID,
-                        any => (any as i32),
-                    };
-                    if tile_number != NO_TILE_ID && tile_number > 0 {
-                        tiles.insert(Point3::new(tile_x, tile_y, tile_z), (tile_number - 1) as usize);
-                    }
-                }
-            }
-        }
-
-        LevelConfig{
-            height: level.height,
-            width: level.width,
-            start_x: level.properties.iter().filter(|e| e.name == "start_x".to_string()).next().unwrap().value as u32,
-            start_y: level.properties.iter().filter(|e| e.name == "start_y".to_string()).next().unwrap().value as u32,
-            tiles
-        }
-    }
-}
-
-fn get_z_from_layer_name(name: &str) -> usize{
-    match name {
-        "Structures" => 0,
-        "Entities" => 1,
-        "Interactives" => 2,
-        "Background" => 3,
-        _ => 99
-    }
 }
 
 fn initialise_power_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
@@ -405,22 +363,3 @@ fn initialise_life_and_fuel_ui(world: &mut World) {
     }
 }
 
-#[derive(Debug, Deserialize)]
-pub struct TiledLevel {
-    pub height: u32,
-    pub width: u32,
-    pub layers: Vec<TiledLayer>,
-    pub properties: Vec<TiledPropery>
-}
-
-#[derive(Debug, Deserialize)]
-pub struct TiledPropery{
-    pub name: String,
-    pub value: usize
-}
-
-#[derive(Debug, Deserialize)]
-pub struct TiledLayer{
-    data: Vec<usize>,
-    name: String,
-}
