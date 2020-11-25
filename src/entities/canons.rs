@@ -9,7 +9,7 @@ pub fn canon_to_shooting_timer(kind: &CanonKind) -> f32{
     match kind {
         CanonKind::Bullet => 1.5,
         CanonKind::Smg => 0.8,
-        CanonKind::Air => 0.4,
+        CanonKind::Air => 0.5,
         _ => 0.
     }
 }
@@ -35,7 +35,7 @@ pub struct Bullet {
 pub fn canon_kind_to_bullet_life_duration(kind: &CanonKind) -> f32 {
     match kind {
         CanonKind::Bullet | CanonKind::Smg => 3.,
-        CanonKind::Air => 0.4,
+        CanonKind::Air => 1.2,
         _ =>0.
     }
 }
@@ -43,7 +43,7 @@ pub fn canon_kind_to_bullet_life_duration(kind: &CanonKind) -> f32 {
 pub fn canon_kind_to_bullet_speed(kind: &CanonKind) -> f32 {
     match kind {
         CanonKind::Bullet | CanonKind::Smg => 180.,
-        CanonKind::Air => 80.,
+        CanonKind::Air => 40.,
         _ =>0.
     }
 }

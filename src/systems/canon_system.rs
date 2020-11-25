@@ -37,7 +37,7 @@ impl<'s> System<'s> for CanonSystem {
             if val <= &0. {
                 match canon.kind {
                     CanonKind::Air => {
-                        for bullet_index in 0..2 {
+                        for bullet_index in 0..1 {
                             let mut bullet_transform = Transform::default();
                             bullet_transform.set_translation_xyz(canon.bullet_x_start - bullet_index as f32 * 15.,  canon.bullet_y_start, 0.9);
                             entities

@@ -1,5 +1,5 @@
 use amethyst::core::ecs::{System, ReadStorage, WriteStorage, Join, Read, Entities, Write};
-use crate::entities::canons::{Bullet, Canon, CanonKind, canon_kind_to_bullet_speed};
+use crate::entities::canons::{Bullet, Canon, CanonKind, canon_kind_to_bullet_speed, canon_kind_to_bullet_life_duration};
 use amethyst::core::{Transform, Time};
 use crate::utils::Direction;
 use crate::entities::collision::{Colliders, are_colliding};
@@ -7,6 +7,7 @@ use geo::Polygon;
 use crate::utils::sprites::sprite_to_entities::init_bullet_collider;
 use crate::resources::main_resource::MainResource;
 use crate::entities::ship::ShipParent;
+use amethyst::core::math::Vector3;
 
 pub struct BulletSystem;
 
@@ -29,6 +30,10 @@ impl<'s> System<'s> for BulletSystem {
         let mut bullet_vec: Vec<(u32, Vec<Polygon<f32>>)> = Vec::new();
         for (bullet, transform, entity) in (&mut bullets, &mut transforms, &entities).join() {
             let colliders = init_bullet_collider(&bullet.kind, transform.translation().x, transform.translation().y);
+            match bullet.kind {
+                CanonKind::Air => {transform.set_scale(Vector3::new(1., 1. + (canon_kind_to_bullet_life_duration(&bullet.kind) - bullet.life_duration)/1.5, 1.0));}
+                _ => {}
+            }
             if are_colliding(colliders.polygons(), &ship_polygon) {
                 match bullet.kind {
                     CanonKind::Air => {
