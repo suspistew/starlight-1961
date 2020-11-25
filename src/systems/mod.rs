@@ -10,3 +10,4 @@ pub mod ui_system;
 pub mod menu_background_system;
 pub mod score_system;
 pub mod blade_saw_system;
+pub mod bonus_system;

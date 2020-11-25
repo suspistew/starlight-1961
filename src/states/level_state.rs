@@ -9,7 +9,7 @@ use serde_json::from_reader;
 use std::collections::HashMap;
 use crate::entities::ship::{Ship, ShipParent, Thrusters, ShipPowerLeftNumber, ShipLife, ShipFuel, ShipPowerRightNumber};
 use crate::resources::main_resource::{MainResource, MainSprites};
-use crate::utils::sprites::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon, is_arrival, BLADE_SAW_SPRITE};
+use crate::utils::sprites::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon, is_arrival, BLADE_SAW_SPRITE, sprite_to_bonus_kind};
 use crate::entities::collision::{LandingPlatform, Arrival};
 use amethyst::utils::application_root_dir;
 use amethyst::core::math::Point3;
@@ -23,6 +23,7 @@ use crate::states::next_level::NextLevelState;
 use crate::states::end_state::EndLevelState;
 use crate::utils::level_reader::{LevelConfig, read_level};
 use crate::entities::blade_saw::BladeSawSprite;
+use crate::entities::bonus::Bonus;
 
 pub struct LevelState{
     pub level_nb: usize
@@ -86,7 +87,21 @@ fn load_level(lvl_number: usize, world: &mut World) {
 
 fn initialize_colliders_with_entitites(world: &mut World, level: &LevelConfig, sprite_sheet_handle: Handle<SpriteSheet>) {
     for (point, sprite) in level.tiles.borrow() {
+        if let Some(bonus) = sprite_to_bonus_kind(*sprite) {
+            let mut transform = Transform::default();
+            transform.set_translation_xyz(point.x as f32 * TILE_SIZE, point.y as f32 * TILE_SIZE,0.6);
+
+            world
+                .create_entity().with(Bonus{ initial_sprite: *sprite, kind: bonus, taken: false })
+                .with(SpriteRender {
+                    sprite_sheet: sprite_sheet_handle.clone(),
+                    sprite_number: *sprite,
+                })
+                .with(transform).build();
+        }
+
         let collider = sprite_to_colliders(*sprite, point.x as f32 * TILE_SIZE, point.y as f32 * TILE_SIZE);
+
         if collider.is_some() {
             let mut builder = world
                 .create_entity()
@@ -169,7 +184,7 @@ fn initialize_ship(
     transform.set_translation_xyz(
         level.start_x as f32 * TILE_SIZE - 16.,
         (level.height - level.start_y) as f32 * TILE_SIZE,
-        0.04,
+        0.8,
     );
 
     let parent = world

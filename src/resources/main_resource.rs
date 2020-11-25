@@ -25,6 +25,7 @@ pub struct MainResource {
     pub ship_life: u8,
     pub ship_fuel: f32,
     pub should_reset_plasma_timers: bool,
+    pub should_reset_bonuses: bool,
     pub bullet_hit_timer: f32
 }
 
@@ -51,7 +52,19 @@ impl MainResource {
             current_level: lvl_nb,
             ship_fuel: 10. * 50.,
             should_reset_plasma_timers: true,
+            should_reset_bonuses: true,
             bullet_hit_timer: 0.
+        }
+    }
+
+    pub fn bonus_heal(&mut self){
+        if self.ship_life < 3 { self.ship_life += 1 ;}
+    }
+
+    pub fn bonus_fuel(&mut self){
+        self.ship_fuel += 4. * 50.;
+        if self.ship_fuel > 10. * 50. {
+            self.ship_fuel = 10. * 50.;
         }
     }
 
@@ -74,6 +87,7 @@ impl MainResource {
         self.ship_life = 3;
         self.ship_fuel = 10. * 50.;
         self.bullet_hit_timer = 0.;
+        self.should_reset_bonuses= true;
     }
 
     pub fn power(&mut self, delta_time: f32,  rotation: &UnitQuaternion<f32>) {

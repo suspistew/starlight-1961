@@ -3,6 +3,7 @@ use crate::utils::{Point2D, Direction};
 use crate::entities::canons::{Canon, CanonKind};
 use crate::utils::sprites::plasma_doors::*;
 use crate::utils::sprites::TILE_SIZE;
+use crate::entities::bonus::{BonusKind, Bonus};
 
 
 pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<Colliders> {
@@ -112,7 +113,10 @@ pub fn init_bullet_collider(kind: &CanonKind, x: f32, y: f32 ) -> Colliders {
         CanonKind::Air =>  Colliders::from_vec(vec![Collider::new(Point2D { x, y }, 12., -28.)]),
         _=> Colliders::from_vec(vec![Collider::new(Point2D { x: x + 14., y: y - 16. }, 6., -4.)])
     }
+}
 
+pub fn init_bonus_collider(kind: &BonusKind, x: f32, y: f32) -> Colliders {
+    Colliders::from_vec(vec![Collider::new(Point2D { x: x + 4., y: y - 4. }, 24., -24.)])
 }
 
 pub fn init_blade_saw_collider(x: f32, y: f32) -> Colliders {
@@ -125,6 +129,14 @@ pub fn is_landing_platform_start(sprite_nb: usize) -> bool{
 
 pub fn is_arrival(sprite_nb: usize) -> bool{
     sprite_nb == LANDING_PLATFORM
+}
+
+pub fn sprite_to_bonus_kind(sprite_nb: usize) -> Option<BonusKind> {
+    match sprite_nb {
+        WRENCH => Some(BonusKind::Wrench),
+        FUEL => Some(BonusKind::Fuel),
+        _ => None
+    }
 }
 
 pub fn sprite_to_canon(sprite_nb: usize, x: usize, y: usize) -> Option<Canon>{
@@ -169,3 +181,6 @@ const LANDING_PLATFORM: usize = 90;
 const STARTING_PLATFORM: usize = 92;
 
 pub const BLADE_SAW_SPRITE: usize = 16;
+
+const WRENCH: usize = 99;
+const FUEL: usize = 98;

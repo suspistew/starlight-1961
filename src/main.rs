@@ -32,6 +32,7 @@ use crate::systems::menu_background_system::MenuBackgroundSystem;
 use crate::systems::score_system::ScoreSystem;
 use crate::states::CurrentState;
 use crate::systems::blade_saw_system::BladeSawSystem;
+use crate::systems::bonus_system::BonusSystem;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -115,7 +116,11 @@ fn main() -> amethyst::Result<()> {
         BladeSawSystem.pausable(CurrentState::Level),
         "blade_saw_system",
         &[],
-    );
+    ).with(
+        BonusSystem::default().pausable(CurrentState::Level),
+        "bonus_system",
+        &[],
+    );;
 
     let mut game = Application::build(resources, MainMenuState)?
         .with_frame_limit(FrameRateLimitStrategy::Sleep, 60)
