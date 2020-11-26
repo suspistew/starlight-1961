@@ -1,4 +1,4 @@
-use amethyst::core::ecs::{System, ReadStorage, WriteStorage, Join, Read, Entities, Write};
+use amethyst::core::ecs::{System, ReadStorage, WriteStorage, Join, Read, Entities, Write, ReadExpect};
 use crate::entities::canons::{Bullet, Canon, CanonKind, canon_kind_to_bullet_speed, canon_kind_to_bullet_life_duration};
 use amethyst::core::{Transform, Time};
 use crate::utils::Direction;
@@ -8,8 +8,24 @@ use crate::utils::sprites::sprite_to_entities::init_bullet_collider;
 use crate::resources::main_resource::MainResource;
 use crate::entities::ship::ShipParent;
 use amethyst::core::math::Vector3;
+use amethyst::assets::AssetStorage;
+use amethyst::audio::Source;
+use crate::utils::sound::{Sounds, play_air, play_hit};
+use amethyst::audio::output::Output;
 
-pub struct BulletSystem;
+const DEFAULT_AIR_TIMER:f32= 0.2;
+
+pub struct BulletSystem{
+    pub play_air_timer: f32
+}
+
+impl Default for BulletSystem{
+    fn default() -> Self {
+        BulletSystem{
+            play_air_timer: DEFAULT_AIR_TIMER
+        }
+    }
+}
 
 impl<'s> System<'s> for BulletSystem {
     type SystemData = (
@@ -20,9 +36,14 @@ impl<'s> System<'s> for BulletSystem {
         ReadStorage<'s, ShipParent>,
         Write<'s, MainResource>,
         Read<'s, Time>,
-        Entities<'s>,);
+        Entities<'s>,
+        Read<'s, AssetStorage<Source>>,
+        ReadExpect<'s, Sounds>,
+        Option<Read<'s, Output>>,
+    );
 
-    fn run(&mut self, (mut bullets, canons, mut transforms, colliders, ships,mut main_resource, time, entities): Self::SystemData) {
+    fn run(&mut self, (mut bullets, canons, mut transforms, colliders, ships,mut main_resource, time, entities, storage, sounds, audio_output): Self::SystemData) {
+        self.play_air_timer -= time.delta_seconds();
         let mut ship_polygon = Vec::new();
         for (_ship, transform) in (&ships, &transforms).join() {
             ship_polygon = main_resource.get_colliders_polygons_for_collision(transform.translation().x, transform.translation().y);
@@ -37,6 +58,10 @@ impl<'s> System<'s> for BulletSystem {
             if are_colliding(colliders.polygons(), &ship_polygon) {
                 match bullet.kind {
                     CanonKind::Air => {
+                        if self.play_air_timer <= 0. {
+                            play_air(&*sounds, &storage, audio_output.as_deref());
+                            self.play_air_timer = DEFAULT_AIR_TIMER;
+                        }
                         match bullet.direction {
                             Direction::Left => {main_resource.x_force -= 3. * time.delta_seconds();},
                             Direction::Right => {main_resource.x_force += 3. * time.delta_seconds();},
@@ -45,6 +70,7 @@ impl<'s> System<'s> for BulletSystem {
 
                     },
                     _=> {
+                        play_hit(&*sounds, &storage, audio_output.as_deref());
                         main_resource.bullet_hit();
 
                         let _res = entities.delete(entity);

@@ -1,4 +1,4 @@
-use amethyst::core::ecs::{System, WriteStorage, ReadStorage, Read, Join, Write, Entities};
+use amethyst::core::ecs::{System, WriteStorage, ReadStorage, Read, Join, Write, Entities, ReadExpect};
 use amethyst::core::{Transform, Time};
 use crate::entities::ship::{Ship, ShipParent};
 use amethyst::input::{InputHandler, StringBindings};
@@ -6,10 +6,25 @@ use amethyst::renderer::{SpriteRender, SpriteSheet};
 use crate::resources::main_resource::MainResource;
 use amethyst::core::num::FloatConst;
 use crate::entities::explosion::Explosion;
-use amethyst::assets::Handle;
+use amethyst::assets::{Handle, AssetStorage};
 use crate::utils::sprites::TILE_SIZE;
+use crate::utils::sound::{play_explosion, Sounds, play_fire};
+use amethyst::audio::Source;
+use amethyst::audio::output::Output;
 
-pub struct ShipSystem;
+const DEFAULT_FIRE_TIMER:f32= 0.2;
+
+pub struct ShipSystem{
+    pub play_fire_timer: f32
+}
+
+impl Default for ShipSystem{
+    fn default() -> Self {
+        ShipSystem{
+            play_fire_timer: DEFAULT_FIRE_TIMER
+        }
+    }
+}
 
 fn angle_rotation_modifier_bind_to_pi() -> f32 { f32::PI() / 96. }
 
@@ -27,9 +42,13 @@ impl<'s> System<'s> for ShipSystem {
         Read<'s, Time>,
         WriteStorage<'s, Explosion>,
         Entities<'s>,
+        Read<'s, AssetStorage<Source>>,
+        ReadExpect<'s, Sounds>,
+        Option<Read<'s, Output>>,
     );
 
-    fn run(&mut self, (mut transforms, ships, ships_parent, input, mut sprites, mut main_resource, time,mut explosions,  entities): Self::SystemData) {
+    fn run(&mut self, (mut transforms, ships, ships_parent, input, mut sprites, mut main_resource, time,mut explosions,  entities, storage, sounds, audio_output): Self::SystemData) {
+        self.play_fire_timer -= time.delta_seconds();
         if main_resource.bullet_hit_timer > 0. {
             main_resource.bullet_hit_timer -= time.delta_seconds();
         }
@@ -39,6 +58,10 @@ impl<'s> System<'s> for ShipSystem {
             sprite_render.sprite_number = main_resource.sprite_nb();
             let power = input.action_is_down("power");
             if main_resource.ship_fuel > 0. && power.is_some() && power.unwrap()  {
+                if self.play_fire_timer <= 0. {
+                    play_fire(&*sounds, &storage, audio_output.as_deref());
+                    self.play_fire_timer = DEFAULT_FIRE_TIMER;
+                }
                 main_resource.power(time.delta_seconds(), transform.rotation());
             } else {
                 main_resource.apply_gravity(time.delta_seconds());
@@ -88,6 +111,7 @@ impl<'s> System<'s> for ShipSystem {
         }
 
         if main_resource.ship_life <= 0 {
+            play_explosion(&*sounds, &storage, audio_output.as_deref());
             main_resource.is_exploding = true;
             let mut explosion_transform = Transform::default();
             explosion_transform.set_translation_xyz(ship_transform.0, ship_transform.1, 0.9);
