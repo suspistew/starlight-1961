@@ -91,6 +91,7 @@ impl Collider {
 }
 
 pub fn are_colliding(ship_polygon: &Vec<Polygon<f32>>, struct_polygons: &Vec<Polygon<f32>>) -> bool {
+
     for polygon in ship_polygon.iter() {
         for struct_polygon in struct_polygons.iter() {
             if polygon.intersects(struct_polygon) {

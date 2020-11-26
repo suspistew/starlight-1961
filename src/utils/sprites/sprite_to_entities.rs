@@ -81,26 +81,48 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
             ));
         },
         CANON_1_TO_LEFT => {
-            let basemen_collider = Collider::new(Point2D { x: pos_x, y: pos_y -4. }, 14., -24.);
+            let basement_collider = Collider::new(Point2D { x: pos_x, y: pos_y -4. }, 14., -24.);
             let canon_collider = Collider::new(Point2D { x: pos_x + 14., y: pos_y -14. }, 18., -8.);
-            return Some(Colliders::from_vec(vec![basemen_collider, canon_collider]));
+            return Some(Colliders::from_vec(vec![basement_collider, canon_collider]));
         },
         CANON_1_TO_RIGHT => {
-            let basemen_collider = Collider::new(Point2D { x: pos_x+ 32., y: pos_y -4. }, -14., -24.);
+            let basement_collider = Collider::new(Point2D { x: pos_x+ 32., y: pos_y -4. }, -14., -24.);
             let canon_collider = Collider::new(Point2D { x: pos_x + 18., y: pos_y -14. }, -18., -8.);
-            return Some(Colliders::from_vec(vec![basemen_collider, canon_collider]));
+            return Some(Colliders::from_vec(vec![basement_collider, canon_collider]));
         },
-        CANON_2_TO_LEFT => {
+        CANON_1_TO_TOP => {
+            let basement_collider = Collider::new(Point2D { x: pos_x + 4., y: pos_y -18.}, 24., -14.);
+            let canon_collider = Collider::new(Point2D { x: pos_x + 14., y: pos_y }, 8., -18.);
+            return Some(Colliders::from_vec(vec![basement_collider, canon_collider]));
+        },
+        CANON_1_TO_BOTTOM => {
+            let basement_collider = Collider::new(Point2D { x: pos_x + 4., y: pos_y}, 24., -14.);
+            let canon_collider = Collider::new(Point2D { x: pos_x + 14., y: pos_y - 14. }, 8., -18.);
+            return Some(Colliders::from_vec(vec![basement_collider, canon_collider]));
+        },
+        CANON_2_TO_LEFT | CANON_2_TO_RIGHT => {
             let canon_collider = Collider::new(Point2D { x: pos_x, y: pos_y -8. }, 32., -16.);
             return Some(Colliders::from_vec(vec![canon_collider]));
         },
-        CANON_3_TO_LEFT => {
+        CANON_2_TO_TOP | CANON_2_TO_BOTTOM => {
+            let canon_collider = Collider::new(Point2D { x: pos_x + 8., y: pos_y }, 16., -32.);
+            return Some(Colliders::from_vec(vec![canon_collider]));
+        },
+        CANON_3_TO_LEFT | CANON_3_TO_RIGHT => {
             let canon_collider = Collider::new(Point2D { x: pos_x, y: pos_y -8. }, 32., -16.);
             return Some(Colliders::from_vec(vec![canon_collider]));
         },
-        CLOSED_PLASMA_LEFT| CLOSED_PLASMA_RIGHT| CLOSED_PLASMA_TOP| CLOSED_PLASMA_BOTTOM| HORIZONTAL_PLASMA_0_A| HORIZONTAL_PLASMA_0_B| HORIZONTAL_PLASMA_1_A| HORIZONTAL_PLASMA_1_B| HORIZONTAL_PLASMA_2_A| HORIZONTAL_PLASMA_2_B| HORIZONTAL_PLASMA_3_A| HORIZONTAL_PLASMA_3_B=> {
+        HORIZONTAL_PLASMA_0_A| HORIZONTAL_PLASMA_0_B| HORIZONTAL_PLASMA_1_A| HORIZONTAL_PLASMA_1_B| HORIZONTAL_PLASMA_2_A| HORIZONTAL_PLASMA_2_B| HORIZONTAL_PLASMA_3_A| HORIZONTAL_PLASMA_3_B=> {
             let door_collider = Collider::new(Point2D { x: pos_x, y: pos_y -10. }, 32., -8.);
             return Some(Colliders::from_vec(vec![door_collider]));
+        },
+        VERTICAL_PLASMA_0_A | VERTICAL_PLASMA_0_B | VERTICAL_PLASMA_1_A  | VERTICAL_PLASMA_1_B | VERTICAL_PLASMA_2_A |  VERTICAL_PLASMA_2_B | VERTICAL_PLASMA_3_A |  VERTICAL_PLASMA_3_B => {
+            let door_collider = Collider::new(Point2D { x: pos_x + 14., y: pos_y }, 8., -32.);
+            return Some(Colliders::from_vec(vec![door_collider]));
+        }
+        ITEM_PLATFORM => {
+            let platform_collider = Collider::new(Point2D { x: pos_x, y: pos_y -16. }, 32., -10.);
+            return Some(Colliders::from_vec(vec![platform_collider]));
         }
         _ => {}
     };
@@ -143,10 +165,14 @@ pub fn sprite_to_canon(sprite_nb: usize, x: usize, y: usize) -> Option<Canon>{
     match sprite_nb {
         CANON_1_TO_LEFT => Some(Canon{ direction: Direction::Left, kind: CanonKind::Bullet, bullet_x_start: (x as f32  * TILE_SIZE ) - 16., bullet_y_start: (y as f32 * TILE_SIZE) - 2.  }),
         CANON_1_TO_RIGHT =>Some(Canon{ direction: Direction::Right, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ) + 16., bullet_y_start: (y as f32 * TILE_SIZE) - 2.  }),
-        CANON_1_TO_TOP => Some(Canon{ direction: Direction::Top, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ) , bullet_y_start: (y as f32 * TILE_SIZE)}),
+        CANON_1_TO_TOP => Some(Canon{ direction: Direction::Top, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ), bullet_y_start: (y as f32 * TILE_SIZE)}),
         CANON_1_TO_BOTTOM => Some(Canon{ direction: Direction::Bottom, kind: CanonKind::Bullet, bullet_x_start: (x as f32 * TILE_SIZE ), bullet_y_start: (y as f32 * TILE_SIZE)}),
         CANON_2_TO_LEFT => Some(Canon{ direction: Direction::Left, kind: CanonKind::Smg, bullet_x_start: (x as f32  * TILE_SIZE ) - 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
+        CANON_2_TO_RIGHT => Some(Canon{ direction: Direction::Right, kind: CanonKind::Smg, bullet_x_start: (x as f32  * TILE_SIZE ) + 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
+        CANON_2_TO_TOP => Some(Canon{ direction: Direction::Top, kind: CanonKind::Smg, bullet_x_start: (x as f32  * TILE_SIZE ) , bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
+        CANON_2_TO_BOTTOM => Some(Canon{ direction: Direction::Bottom, kind: CanonKind::Smg, bullet_x_start: (x as f32  * TILE_SIZE ) , bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
         CANON_3_TO_LEFT => Some(Canon{ direction: Direction::Left, kind: CanonKind::Air, bullet_x_start: (x as f32  * TILE_SIZE ) - 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
+        CANON_3_TO_RIGHT => Some(Canon{ direction: Direction::Right, kind: CanonKind::Air, bullet_x_start: (x as f32  * TILE_SIZE ) + 16., bullet_y_start: (y as f32 * TILE_SIZE) - 1.  }),
         _ => None
     }
 }
@@ -164,6 +190,7 @@ const DIAG_TOP_RIGHT_TO_BOT_LEFT_WALL: usize = 33;
 const DIAG_BOT_LEFT_TO_TOP_RIGHT_WALL: usize = 44;
 const DIAG_BOT_RIGHT_TO_TOP_LEFT_WALL: usize = 43;
 
+const ITEM_PLATFORM: usize = 96;
 
 const CANON_1_TO_LEFT: usize = 18;
 const CANON_1_TO_RIGHT: usize = 8;
@@ -172,6 +199,8 @@ const CANON_1_TO_BOTTOM: usize = 7;
 
 const CANON_2_TO_LEFT: usize = 28;
 const CANON_2_TO_RIGHT: usize = 27;
+const CANON_2_TO_TOP: usize = 38;
+const CANON_2_TO_BOTTOM: usize = 37;
 
 
 const CANON_3_TO_LEFT: usize = 48;

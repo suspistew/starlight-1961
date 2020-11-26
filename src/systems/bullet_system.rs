@@ -37,7 +37,12 @@ impl<'s> System<'s> for BulletSystem {
             if are_colliding(colliders.polygons(), &ship_polygon) {
                 match bullet.kind {
                     CanonKind::Air => {
-                        main_resource.x_force -= 2. * time.delta_seconds();
+                        match bullet.direction {
+                            Direction::Left => {main_resource.x_force -= 3. * time.delta_seconds();},
+                            Direction::Right => {main_resource.x_force += 3. * time.delta_seconds();},
+                            _ => {}
+                        }
+
                     },
                     _=> {
                         main_resource.bullet_hit();
@@ -45,7 +50,6 @@ impl<'s> System<'s> for BulletSystem {
                         let _res = entities.delete(entity);
                     }
                 }
-
             }else{
                 bullet_vec.push((entity.id(), colliders.polygons().clone()));
             }
@@ -53,17 +57,19 @@ impl<'s> System<'s> for BulletSystem {
             match bullet.direction {
                 Direction::Left => transform.append_translation_xyz(-1. * bullet_speed  * time.delta_seconds(), 0., 0.),
                 Direction::Right => transform.append_translation_xyz(bullet_speed * time.delta_seconds(), 0., 0.),
+                Direction::Top => transform.append_translation_xyz(0., bullet_speed  * time.delta_seconds(), 0.),
+                Direction::Bottom => transform.append_translation_xyz(0.,-1. * bullet_speed  * time.delta_seconds(), 0.),
                 _ => {transform.append_translation_xyz(0.,0.,0.)}
             };
             bullet.life_duration -= time.delta_seconds();
             if bullet.life_duration <= 0. { let _res = entities.delete(entity); }
         }
-        for (platform_collider, _, _) in (&colliders, !&bullets, !&canons).join() {
-            for (id, polygons) in bullet_vec.iter(){
-                if are_colliding(&polygons, platform_collider.polygons()) {
-                    let e = entities.entity(*id);
-                    let _res = entities.delete(e);
-                }
+
+        let joined: Vec<_> = (&colliders, !&bullets, !&canons).join().flat_map(|(a,b,c)| a.to_owned_polygons()).collect();
+        for (id, polygons) in bullet_vec.iter(){
+            if are_colliding(&polygons, &joined) {
+                let e = entities.entity(*id);
+                let _res = entities.delete(e);
             }
         }
     }

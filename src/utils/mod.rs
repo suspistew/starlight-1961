@@ -11,3 +11,7 @@ pub struct Point2D {
 pub enum Direction {
     Left, Right, Top, Bottom
 }
+
+pub fn distance_between_two_points(xa: f32, ya:f32, xb:f32, yb:f32) -> f32 {
+    ((xa - xb) * (xa - xb) + (ya - yb) * (ya - yb)).sqrt()
+}
