@@ -1,10 +1,14 @@
-use amethyst::core::ecs::{System, ReadStorage, Write, Join};
+use amethyst::core::ecs::{System, ReadStorage, Write, Join, Read, ReadExpect};
 use crate::entities::collision::{Colliders, LandingPlatform, are_colliding};
 use crate::entities::ship::ShipParent;
 use amethyst::core::Transform;
 use crate::resources::main_resource::MainResource;
 use crate::systems::ship_systems::ANGLE_ROTATION_DEGREE_MODIFIER;
 use crate::utils::sprites::TILE_SIZE;
+use amethyst::assets::AssetStorage;
+use amethyst::audio::Source;
+use crate::utils::sound::{Sounds, play_land};
+use amethyst::audio::output::Output;
 
 pub struct LandingSystem;
 
@@ -14,10 +18,13 @@ impl <'s> System<'s> for LandingSystem {
         ReadStorage<'s, LandingPlatform>,
         ReadStorage<'s, ShipParent>,
         ReadStorage<'s, Transform>,
-        Write<'s, MainResource>
+        Write<'s, MainResource>,
+        Read<'s, AssetStorage<Source>>,
+        ReadExpect<'s, Sounds>,
+        Option<Read<'s, Output>>,
     );
 
-    fn run(&mut self, (colliders, landing_plateforms, ships, transforms, mut ship_resource): Self::SystemData) {
+    fn run(&mut self, (colliders, landing_plateforms, ships, transforms, mut ship_resource, storage, sounds, audio_output): Self::SystemData) {
         for (_ship, transform) in (&ships, &transforms).join() {
             let ship_polygon = ship_resource.get_colliders_polygons_for_landing(transform.translation().x, transform.translation().y);
             for (collider, _) in (&colliders, &landing_plateforms).join() {
@@ -25,6 +32,7 @@ impl <'s> System<'s> for LandingSystem {
                 let struct_polygons = collider.polygons();
                 if !ship_resource.is_exploding && !ship_resource.is_landed && are_colliding(&ship_polygon, struct_polygons) {
                     if correct_landing_position(&ship_resource, transform, collider) {
+                        play_land(&*sounds, &storage, audio_output.as_deref());
                         ship_resource.is_landed = true;
                         ship_resource.y_force = 0.;
                         ship_resource.x_force = 0.;

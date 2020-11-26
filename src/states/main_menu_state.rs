@@ -10,6 +10,7 @@ use crate::entities::ship::Ship;
 use amethyst::input::{is_key_down, VirtualKeyCode};
 use crate::states::CurrentState;
 use crate::states::next_level::NextLevelState;
+use crate::utils::sound::{initialise_audio};
 
 pub struct MainMenuState;
 
@@ -34,7 +35,7 @@ impl SimpleState for MainMenuState {
         add_push_enter_text(world);
 
         initialize_camera(world);
-
+        initialise_audio(world);
     }
 
     fn handle_event(

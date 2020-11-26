@@ -1,4 +1,4 @@
-use amethyst::core::ecs::{System, WriteStorage, Write, ReadStorage, Read, Join};
+use amethyst::core::ecs::{System, WriteStorage, Write, ReadStorage, Read, Join, ReadExpect};
 use crate::entities::bonus::{Bonus, BonusKind};
 use amethyst::core::{Transform, Time};
 use crate::resources::main_resource::MainResource;
@@ -7,6 +7,10 @@ use crate::utils::sprites::sprite_to_entities::init_bonus_collider;
 use crate::entities::collision::are_colliding;
 use amethyst::renderer::SpriteRender;
 use crate::utils::sprites::plasma_doors::EMPTY;
+use amethyst::assets::AssetStorage;
+use crate::utils::sound::{Sounds, play_bonus};
+use amethyst::audio::output::Output;
+use amethyst::audio::Source;
 
 const DEFAULT_CHANGE_DIRECTION_TIMER :f32 = 0.6;
 
@@ -32,9 +36,12 @@ impl<'s> System<'s> for BonusSystem {
         ReadStorage<'s, ShipParent>,
         WriteStorage<'s, SpriteRender>,
         Read<'s, Time>,
+        Read<'s, AssetStorage<Source>>,
+        ReadExpect<'s, Sounds>,
+        Option<Read<'s, Output>>,
     );
 
-    fn run(&mut self, (mut bonuses, mut transforms, mut main_resource, ships, mut sprites, time): Self::SystemData) {
+    fn run(&mut self, (mut bonuses, mut transforms, mut main_resource, ships, mut sprites, time, storage, sounds, audio_output): Self::SystemData) {
         self.change_direction_timer -= time.delta_seconds();
         if self.change_direction_timer <= 0. {
             self.change_direction_timer = DEFAULT_CHANGE_DIRECTION_TIMER;
@@ -60,6 +67,7 @@ impl<'s> System<'s> for BonusSystem {
                         main_resource.bonus_heal();
                     }
                 }
+                play_bonus(&*sounds, &storage, audio_output.as_deref());
                 bonus.taken = true;
                 sprite.sprite_number= EMPTY;
             }

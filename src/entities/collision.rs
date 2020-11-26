@@ -3,6 +3,12 @@ use amethyst::core::ecs::{Component, DenseVecStorage};
 use geo::{Polygon, LineString};
 use geo::intersects::Intersects;
 
+pub struct ButtonPlatform;
+
+impl Component for ButtonPlatform {
+    type Storage = DenseVecStorage<Self>;
+}
+
 pub struct LandingPlatform;
 
 impl Component for LandingPlatform {

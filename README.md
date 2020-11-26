@@ -50,3 +50,6 @@ cargo run --features "metal"
 ```
 
 ### Credits 
+
+- Main theme is : Frozen Jam by tgfcoder <https://twitter.com/tgfcoder> licensed under CC-BY-3 <http://creativecommons.org/licenses/by/3.0/>
+- Effects : 8-bit Platformer SFX commissioned by Mark McCorkle for OpenGameArt.org ( http://opengameart.org ) && Juhani Junkala

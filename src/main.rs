@@ -33,6 +33,8 @@ use crate::systems::score_system::ScoreSystem;
 use crate::states::CurrentState;
 use crate::systems::blade_saw_system::BladeSawSystem;
 use crate::systems::bonus_system::BonusSystem;
+use amethyst::audio::{AudioBundle, DjSystemDesc, DjSystem};
+use crate::utils::sound::Sounds;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -62,8 +64,14 @@ fn main() -> amethyst::Result<()> {
                 .with_plugin(RenderUi::default())
                 .with_plugin(RenderFlat2D::default())
         )?
+        .with_bundle(AudioBundle::default())?
         .with(
-            ShipSystem.pausable(CurrentState::Level),
+            DjSystem::new(|music: &mut Sounds| music.menu_music.next()),
+            "dj",
+            &[],
+        )
+        .with(
+            ShipSystem::default().pausable(CurrentState::Level),
             "ship_system",
             &["input_system"],
         )
@@ -93,7 +101,7 @@ fn main() -> amethyst::Result<()> {
             &[],
         )
         .with(
-            BulletSystem.pausable(CurrentState::Level),
+            BulletSystem::default().pausable(CurrentState::Level),
             "bullet_system",
             &[],
         ).with(
