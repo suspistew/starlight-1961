@@ -48,10 +48,6 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
             let platform_collider = Collider::new(Point2D { x: pos_x, y: pos_y }, 64., -32.);
             return Some(Colliders::from_vec(vec![platform_collider]));
         },
-        BUTTON_PLATEFORM_STATE_1 => {
-            let platform_collider = Collider::new(Point2D { x: pos_x, y: pos_y }, 64., -32.);
-            return Some(Colliders::from_vec(vec![platform_collider]));
-        },
         DIAG_TOP_LEFT_TO_BOT_RIGHT_WALL => {
             return Some(Colliders::from_points(
                 Point2D{ x: pos_x , y: pos_y },
@@ -212,12 +208,6 @@ const CANON_3_TO_RIGHT: usize = 47;
 
 const LANDING_PLATFORM: usize = 90;
 const STARTING_PLATFORM: usize = 92;
-
-const BUTTON_PLATEFORM_STATE_1: usize = 1;
-const BUTTON_PLATEFORM_STATE_2: usize = 1;
-const BUTTON_PLATEFORM_STATE_3: usize = 1;
-
-
 pub const BLADE_SAW_SPRITE: usize = 16;
 
 const WRENCH: usize = 99;

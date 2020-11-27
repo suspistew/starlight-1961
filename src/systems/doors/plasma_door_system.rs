@@ -59,7 +59,7 @@ impl<'s> System<'s> for PlasmaDoorSystem {
                     DoorState::Closed => {
                         door.state = DoorState::Open;
                         sprite.sprite_number = plasma_door_close_sprite(sprite.sprite_number);
-                        self.door_timers.insert(entity.id(), 1.5);
+                        self.door_timers.insert(entity.id(), 2.0);
                     },
                     DoorState::Open => {
                         door.state = DoorState::Closed;
