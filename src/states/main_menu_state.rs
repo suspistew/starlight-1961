@@ -45,7 +45,7 @@ impl SimpleState for MainMenuState {
     ) -> SimpleTrans {
         if let StateEvent::Window(event) = event {
             if is_key_down(&event, VirtualKeyCode::Return) {
-                return Trans::Switch(Box::new(NextLevelState{ next_level_nb: 1 }));
+                return Trans::Switch(Box::new(NextLevelState::new(1 )));
             }
         }
         Trans::None
@@ -92,7 +92,7 @@ pub fn initialize_camera(world: &mut World) {
         .build();
 }
 
-fn add_ship (world: &mut World, ship: Handle<SpriteSheet> ){
+pub fn add_ship (world: &mut World, ship: Handle<SpriteSheet> ){
     let ship_sprite_render = SpriteRender {
         sprite_sheet: ship,
         sprite_number: 0,

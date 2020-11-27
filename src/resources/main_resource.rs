@@ -161,9 +161,9 @@ impl Default for MainResource {
 
 
 fn calculate_y_force(z_rotation: f32) -> f32 {
-    2. * ((0.75 - (z_rotation.abs())) / 0.75)
+    2.5 * ((0.75 - (z_rotation.abs())) / 0.75)
 }
 
 fn calculate_x_force(z_rotation: f32) -> f32 {
-    -1. * ((z_rotation) / 0.50)
+    -1.2 * ((z_rotation) / 0.50)
 }

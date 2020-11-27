@@ -34,7 +34,8 @@ pub struct LevelConfig {
     pub start_x: u32,
     pub start_y: u32,
     pub tiles: HashMap<Point3<u32>,usize>,
-    pub blade_saws: Vec<BladeSaw>
+    pub blade_saws: Vec<BladeSaw>,
+    pub text: String
 }
 
 impl LevelConfig {
@@ -83,7 +84,8 @@ impl LevelConfig {
             start_x: level.properties.iter().filter(|e| e.name == "start_x".to_string()).next().unwrap().value.parse().unwrap(),
             start_y: level.properties.iter().filter(|e| e.name == "start_y".to_string()).next().unwrap().value.parse().unwrap(),
             tiles,
-            blade_saws
+            blade_saws,
+            text: level.properties.iter().filter(|e| e.name == "text".to_string()).next().unwrap().value.to_string(),
         }
     }
 }

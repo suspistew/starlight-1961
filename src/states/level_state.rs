@@ -29,7 +29,7 @@ pub struct LevelState{
     pub level_nb: usize
 }
 
-const MAX_LVL: usize = 2;
+const MAX_LVL: usize = 1;
 
 impl SimpleState for LevelState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
@@ -52,7 +52,7 @@ impl SimpleState for LevelState {
         if victory {
             let new_level =current_level + 1;
             if new_level <= MAX_LVL {
-                return Trans::Switch(Box::new(NextLevelState{ next_level_nb: new_level }));
+                return Trans::Switch(Box::new(NextLevelState::new(new_level )));
             }else{
                 return Trans::Switch(Box::new(EndLevelState));
             }
