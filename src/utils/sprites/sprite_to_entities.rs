@@ -119,12 +119,56 @@ pub fn sprite_to_colliders(sprite_nb: usize, pos_x: f32, pos_y: f32) -> Option<C
         VERTICAL_PLASMA_0_A | VERTICAL_PLASMA_0_B | VERTICAL_PLASMA_1_A  | VERTICAL_PLASMA_1_B | VERTICAL_PLASMA_2_A |  VERTICAL_PLASMA_2_B | VERTICAL_PLASMA_3_A |  VERTICAL_PLASMA_3_B => {
             let door_collider = Collider::new(Point2D { x: pos_x + 14., y: pos_y }, 8., -32.);
             return Some(Colliders::from_vec(vec![door_collider]));
-        }
+        },
         ITEM_PLATFORM => {
             let platform_collider = Collider::new(Point2D { x: pos_x, y: pos_y -16. }, 32., -10.);
             return Some(Colliders::from_vec(vec![platform_collider]));
-        }
-        _ => {}
+        },
+        HORIZONTAL_PILLAR_BASEMENT_LEFT => {
+            let basement = Collider::new(Point2D { x: pos_x + 10., y: pos_y }, 10., -32.);
+            let tube = Collider::new(Point2D { x: pos_x + 20., y: pos_y - 10. }, 12., -12.);
+            return Some(Colliders::from_vec(vec![basement, tube]));
+        },
+        HORIZONTAL_PILLAR_MIDDLE | HORIZONTAL_PILLAR_CLOSURE_CLOSED | HORIZONTAL_PILLAR_CLOSURE_OPENING=> {
+            let tube = Collider::new(Point2D { x: pos_x, y: pos_y - 10. }, 32., -12.);
+            return Some(Colliders::from_vec(vec![tube]));
+        },
+        HORIZONTAL_PILLAR_BASEMENT_RIGHT => {
+            let basement = Collider::new(Point2D { x: pos_x + 16., y: pos_y }, 5., -32.);
+            let tube = Collider::new(Point2D { x: pos_x, y: pos_y - 10. }, 12., -12.);
+            return Some(Colliders::from_vec(vec![basement, tube]));
+        },
+        HORIZONTAL_PILLAR_SLIDING_LEFT => {
+            let tube = Collider::new(Point2D { x: pos_x, y: pos_y - 10. }, 20., -12.);
+            return Some(Colliders::from_vec(vec![tube]));
+        },
+        HORIZONTAL_PILLAR_SLIDING_RIGHT => {
+            let tube = Collider::new(Point2D { x: pos_x + 12., y: pos_y - 10. }, 20., -12.);
+            return Some(Colliders::from_vec(vec![tube]));
+        },
+        VERTICAL_PILLAR_BASEMENT_TOP => {
+            let basement = Collider::new(Point2D { x: pos_x, y: pos_y - 10.}, 32., -10.);
+            let tube = Collider::new(Point2D { x: pos_x + 10. , y: pos_y -20. }, 12., -12.);
+            return Some(Colliders::from_vec(vec![basement, tube]));
+        },
+        VERTICAL_PILLAR_MIDDLE | VERTICAL_PILLAR_CLOSURE_CLOSED | VERTICAL_PILLAR_CLOSURE_OPENING => {
+            let tube = Collider::new(Point2D { x: pos_x + 10., y: pos_y  }, 12., -32.);
+            return Some(Colliders::from_vec(vec![tube]));
+        },
+        VERTICAL_PILLAR_BASEMENT_BOTTOM => {
+            let basement = Collider::new(Point2D { x: pos_x, y: pos_y - 16.}, 32., -10.);
+            let tube = Collider::new(Point2D { x: pos_x + 10. , y: pos_y}, 12., -12.);
+            return Some(Colliders::from_vec(vec![basement, tube]));
+        },
+        VERTICAL_PILLAR_SLIDING_TOP => {
+            let tube = Collider::new(Point2D { x: pos_x + 10. , y: pos_y }, 12., -20.);
+            return Some(Colliders::from_vec(vec![tube]));
+        },
+        VERTICAL_PILLAR_SLIDING_BOTTOM => {
+            let tube = Collider::new(Point2D { x: pos_x + 10., y: pos_y - 12. }, 12., -20.);
+            return Some(Colliders::from_vec(vec![tube]));
+        },
+            _ => {}
     };
 
     None
@@ -212,3 +256,20 @@ pub const BLADE_SAW_SPRITE: usize = 16;
 
 const WRENCH: usize = 99;
 const FUEL: usize = 98;
+
+
+const HORIZONTAL_PILLAR_BASEMENT_LEFT: usize = 110;
+const HORIZONTAL_PILLAR_MIDDLE: usize = 111;
+const HORIZONTAL_PILLAR_CLOSURE_CLOSED: usize = 112;
+const HORIZONTAL_PILLAR_CLOSURE_OPENING: usize = 122;
+const HORIZONTAL_PILLAR_BASEMENT_RIGHT: usize = 113;
+const HORIZONTAL_PILLAR_SLIDING_LEFT: usize = 101;
+const HORIZONTAL_PILLAR_SLIDING_RIGHT: usize = 102;
+
+const VERTICAL_PILLAR_BASEMENT_TOP: usize = 132;
+const VERTICAL_PILLAR_MIDDLE: usize = 142;
+const VERTICAL_PILLAR_CLOSURE_CLOSED: usize = 152;
+const VERTICAL_PILLAR_CLOSURE_OPENING: usize = 151;
+const VERTICAL_PILLAR_BASEMENT_BOTTOM: usize = 162;
+const VERTICAL_PILLAR_SLIDING_TOP: usize = 140;
+const VERTICAL_PILLAR_SLIDING_BOTTOM: usize = 150;
