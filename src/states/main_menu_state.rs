@@ -45,7 +45,7 @@ impl SimpleState for MainMenuState {
     ) -> SimpleTrans {
         if let StateEvent::Window(event) = event {
             if is_key_down(&event, VirtualKeyCode::Return) {
-                return Trans::Switch(Box::new(NextLevelState::new(1 )));
+                return Trans::Switch(Box::new(NextLevelState::new(0 )));
             }
         }
         Trans::None
