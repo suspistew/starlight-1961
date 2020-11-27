@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         config:
-        - { os: ubuntu-18.04, name: starlight-1961-linux, archive: starlight-1961_linux.zip, bin: starlight-1961, ui: vulkan }
+        - { os: ubuntu-18.04, name: starlight-1961-linux, archive: starlight-1961_linux.tar.gz, bin: starlight-1961, ui: vulkan }
         - { os: macos-latest, name: starlight-1961-macos, archive: starlight-1961_macOs.zip,bin: starlight-1961, ui: metal }
         - { os: windows-latest, name: starlight-1961-windows, archive: starlight-1961_windows.zip,bin: starlight-1961.exe, ui: vulkan }
     steps:
@@ -33,9 +33,12 @@ jobs:
         run: |
           move target/release/${{matrix.config.bin}} ${{matrix.config.name}}/${{matrix.config.bin}}
           move assets ${{matrix.config.name}}/assets
-      - name: Zip files (Linux & Mac)
-        if: matrix.config.os != 'windows-latest'
+      - name: Zip files Mac
+        if: matrix.config.os == 'macos-latest'
         run: 7z a -t7z ${{matrix.config.archive}} ${{matrix.config.name}}
+      - name: Zip files Linux
+        if: matrix.config.os == 'ubuntu-18.04'
+        run: tar -zcvf ${{matrix.config.archive}} ${{matrix.config.name}}
       - name: Zip files (Windows)
         if: matrix.config.os == 'windows-latest'
         run: 7z a -t7z ${{matrix.config.archive}} ${{matrix.config.name}}

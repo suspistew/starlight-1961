@@ -2,7 +2,7 @@ use amethyst::core::ecs::{System, ReadStorage, WriteStorage, Join, Read, Entitie
 use crate::entities::canons::{Bullet, Canon, CanonKind, canon_kind_to_bullet_speed, canon_kind_to_bullet_life_duration};
 use amethyst::core::{Transform, Time};
 use crate::utils::Direction;
-use crate::entities::collision::{Colliders, are_colliding};
+use crate::entities::collision::{Colliders, are_colliding, compute_is_eligible_for_collision};
 use geo::Polygon;
 use crate::utils::sprites::sprite_to_entities::init_bullet_collider;
 use crate::resources::main_resource::MainResource;
@@ -48,7 +48,7 @@ impl<'s> System<'s> for BulletSystem {
         for (_ship, transform) in (&ships, &transforms).join() {
             ship_polygon = main_resource.get_colliders_polygons_for_collision(transform.translation().x, transform.translation().y);
         }
-        let mut bullet_vec: Vec<(u32, Vec<Polygon<f32>>)> = Vec::new();
+        let mut bullet_vec: Vec<(u32, Colliders)> = Vec::new();
         for (bullet, transform, entity) in (&mut bullets, &mut transforms, &entities).join() {
             let colliders = init_bullet_collider(&bullet.kind, transform.translation().x, transform.translation().y);
             match bullet.kind {
@@ -77,7 +77,7 @@ impl<'s> System<'s> for BulletSystem {
                     }
                 }
             }else{
-                bullet_vec.push((entity.id(), colliders.polygons().clone()));
+                bullet_vec.push((entity.id(), colliders));
             }
             let bullet_speed = canon_kind_to_bullet_speed(&bullet.kind);
             match bullet.direction {
@@ -91,9 +91,13 @@ impl<'s> System<'s> for BulletSystem {
             if bullet.life_duration <= 0. { let _res = entities.delete(entity); }
         }
 
-        let joined: Vec<_> = (&colliders, !&bullets, !&canons).join().flat_map(|(a,b,c)| a.to_owned_polygons()).collect();
-        for (id, polygons) in bullet_vec.iter(){
-            if are_colliding(&polygons, &joined) {
+        let joined: Vec<_> = (&colliders, !&bullets, !&canons)
+            .join()
+            .filter(|(a, b, c)| {
+                return bullet_vec.iter().any(|(id, collider)| compute_is_eligible_for_collision(*a, &collider));
+            }).flat_map(|(a,b,c)| a.to_owned_polygons()).collect();
+        for (id, col) in bullet_vec.iter(){
+            if  are_colliding(&col.to_owned_polygons(), &joined) {
                 let e = entities.entity(*id);
                 let _res = entities.delete(e);
             }

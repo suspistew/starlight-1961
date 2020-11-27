@@ -127,9 +127,13 @@ impl MainResource {
     }
 
     pub fn get_colliders_polygons_for_collision(&self, x: f32, y:f32) -> Vec<Polygon<f32>> {
+        self.get_colliders_for_collision(x, y).to_owned_polygons()
+    }
+
+    pub fn get_colliders_for_collision(&self, x: f32, y:f32) -> Colliders {
         let main_collider = Collider::new(Point2D{x: x+2., y: y-2.}, 28., -28.);
         let colliders = Colliders::from_vec(vec![main_collider]);
-        colliders.to_owned_polygons()
+        colliders
     }
 
     pub fn get_colliders_polygons_for_landing(&self, x: f32, y:f32) -> Vec<Polygon<f32>> {
