@@ -26,7 +26,8 @@ pub struct MainResource {
     pub ship_fuel: f32,
     pub should_reset_plasma_timers: bool,
     pub should_reset_bonuses: bool,
-    pub bullet_hit_timer: f32
+    pub bullet_hit_timer: f32,
+    pub coin: bool
 }
 
 pub struct MainSprites {
@@ -53,12 +54,16 @@ impl MainResource {
             ship_fuel: 10. * 50.,
             should_reset_plasma_timers: true,
             should_reset_bonuses: true,
-            bullet_hit_timer: 0.
+            bullet_hit_timer: 0.,
+            coin: false
         }
     }
 
     pub fn bonus_heal(&mut self){
         if self.ship_life < 3 { self.ship_life += 1 ;}
+    }
+    pub fn bonus_coin(&mut self){
+        self.coin = true;
     }
 
     pub fn bonus_fuel(&mut self){
@@ -88,13 +93,14 @@ impl MainResource {
         self.ship_fuel = 10. * 50.;
         self.bullet_hit_timer = 0.;
         self.should_reset_bonuses= true;
+        self.coin= false;
     }
 
     pub fn power(&mut self, delta_time: f32,  rotation: &UnitQuaternion<f32>) {
         self.is_landed = false;
         self.y_force += delta_time * calculate_y_force(rotation.rotation().quaternion().k);
         self.x_force += delta_time * calculate_x_force(rotation.rotation().quaternion().k);
-        self.ship_fuel -= cmp::max(self.power, 40) as f32 * delta_time;
+        self.ship_fuel -= cmp::max(self.power, 30) as f32 * delta_time;
         self.power += 1;
     }
 

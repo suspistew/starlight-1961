@@ -95,7 +95,7 @@ fn initialise_texts(world: &mut World, lvl_number: usize, config: LevelConfig) {
             font.clone(),
             text,
             [1., 1., 1., 1.],
-            90.,
+            70.,
             LineMode::Single,
             Anchor::Middle,
         ))
@@ -107,7 +107,7 @@ fn initialise_texts(world: &mut World, lvl_number: usize, config: LevelConfig) {
             font.clone(),
             config.text,
             [1., 1., 1., 1.],
-            70.,
+            50.,
             LineMode::Wrap,
             Anchor::Middle,
         ))

@@ -201,6 +201,7 @@ pub fn sprite_to_bonus_kind(sprite_nb: usize) -> Option<BonusKind> {
     match sprite_nb {
         WRENCH => Some(BonusKind::Wrench),
         FUEL => Some(BonusKind::Fuel),
+        COIN => Some(BonusKind::Coin),
         _ => None
     }
 }
@@ -256,6 +257,7 @@ pub const BLADE_SAW_SPRITE: usize = 16;
 
 const WRENCH: usize = 99;
 const FUEL: usize = 98;
+const COIN: usize = 97;
 
 
 const HORIZONTAL_PILLAR_BASEMENT_LEFT: usize = 110;

@@ -11,5 +11,5 @@ impl Component for Bonus {
 }
 
 pub enum BonusKind{
-    Fuel, Wrench
+    Fuel, Wrench, Coin
 }

@@ -21,7 +21,7 @@ impl<'s> System<'s> for ScoreSystem {
                 let ship_polygon = main_resource.get_colliders_polygons_for_landing(transform.translation().x, transform.translation().y);
                 for (collider, _) in (&colliders, &arrivals).join() {
                     let struct_polygons = collider.polygons();
-                    if are_colliding(&ship_polygon, struct_polygons) {
+                    if are_colliding(&ship_polygon, struct_polygons) && main_resource.coin{
                         main_resource.victory = true;
                     }
                 }
