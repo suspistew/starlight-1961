@@ -1,10 +1,15 @@
-use amethyst::core::ecs::{System, ReadStorage, WriteStorage, Read, Join};
+use amethyst::core::ecs::{System, ReadStorage, WriteStorage, Read, Join, Entities, ReadExpect};
 use crate::entities::main_menu::{MenuBackground, PushEnter};
 use amethyst::core::{Transform, Time};
 use crate::entities::ship::Ship;
 use amethyst::renderer::SpriteRender;
 use rand::Rng;
 use amethyst::ui::UiImage;
+use amethyst::assets::AssetStorage;
+use amethyst::audio::Source;
+use crate::utils::sound::{Sounds, play_bonus};
+use crate::entities::sound::MenuSound;
+use amethyst::audio::output::Output;
 
 pub struct MenuBackgroundSystem {
     blink_delay: f32
@@ -27,9 +32,14 @@ impl<'s> System<'s> for MenuBackgroundSystem {
         WriteStorage<'s, SpriteRender>,
         WriteStorage<'s, UiImage>,
         Read<'s, Time>,
+        Entities<'s>,
+        Read<'s, AssetStorage<Source>>,
+        ReadExpect<'s, Sounds>,
+        Option<Read<'s, Output>>,
+        ReadStorage<'s, MenuSound>
     );
 
-    fn run(&mut self, (backgrounds, mut transforms, ships, pushs, mut sprites, mut images, time): Self::SystemData) {
+    fn run(&mut self, (backgrounds, mut transforms, ships, pushs, mut sprites, mut images, time, mut entities, storage, sounds, audio_output, menu_sounds): Self::SystemData) {
        for(background, transform ) in (&backgrounds, &mut transforms).join(){
            transform.append_translation_xyz(0., (-7. * background.parallax_index as f32) * time.delta_seconds(), 0.);
            if transform.translation().y <= -800. {
@@ -52,6 +62,11 @@ impl<'s> System<'s> for MenuBackgroundSystem {
                 }
             }
             self.blink_delay = 0.5;
+        }
+
+        for(entity, sound) in (&*entities, &menu_sounds).join(){
+            entities.delete(entity);
+            play_bonus(&*sounds, &storage, audio_output.as_deref());
         }
     }
 }

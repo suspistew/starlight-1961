@@ -9,6 +9,7 @@ use crate::utils::sprites::{SCREEN_WIDTH, SCREEN_HEIGHT, load_ship_thrusters_spr
 use amethyst::ui::{TtfFormat, UiTransform, Anchor, UiText, LineMode};
 use amethyst::assets::Loader;
 use crate::states::main_menu_state::{add_animated_backgrounds, add_ship};
+use crate::utils::save::save_progress;
 
 pub struct NextLevelState {
     pub next_level_nb: usize,
@@ -26,6 +27,9 @@ impl NextLevelState{
 impl SimpleState for NextLevelState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         *data.world.write_resource::<CurrentState>() = CurrentState::MainMenu;
+        if self.next_level_nb > 0 {
+            save_progress(self.next_level_nb);
+        }
         let level = read_level( self.next_level_nb);
         let world = data.world;
         initialise_camera(world);

@@ -29,7 +29,7 @@ impl<'s> System<'s> for BladeSawSystem {
             ship_polygon = main_resource.get_colliders_polygons_for_collision(transform.translation().x, transform.translation().y);
         }
         for (blade, transform) in (&mut blade_parents, &mut transforms).join() {
-            transform.append_translation_xyz(40. * blade.direction_x * time.delta_seconds(), 30. * blade.direction_y * time.delta_seconds(), 0.);
+            transform.append_translation_xyz(50. * blade.direction_x * time.delta_seconds(), 50. * blade.direction_y * time.delta_seconds(), 0.);
             let (x, y) = (transform.translation().x, transform.translation().y);
             if x <= (blade.min_x * TILE_SIZE - 16.)
                 ||  x >= (blade.max_x * TILE_SIZE + 16.) {

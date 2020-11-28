@@ -130,7 +130,7 @@ fn main() -> amethyst::Result<()> {
         &[],
     );;
 
-    let mut game = Application::build(resources, MainMenuState)?
+    let mut game = Application::build(resources, MainMenuState::default())?
         .with_frame_limit(FrameRateLimitStrategy::Sleep, 60)
         .build(game_data)?;
     game.run();

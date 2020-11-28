@@ -1,6 +1,7 @@
 pub mod sprites;
 pub mod level_reader;
 pub mod sound;
+pub mod save;
 
 #[derive(Debug)]
 pub struct Point2D {

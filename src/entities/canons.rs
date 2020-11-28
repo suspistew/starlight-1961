@@ -8,7 +8,7 @@ pub enum CanonKind {
 pub fn canon_to_shooting_timer(kind: &CanonKind) -> f32{
     match kind {
         CanonKind::Bullet => 1.5,
-        CanonKind::Smg => 0.8,
+        CanonKind::Smg => 0.4,
         CanonKind::Air => 0.5,
         _ => 0.
     }

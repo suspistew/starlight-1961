@@ -32,6 +32,9 @@ const CONFIG_EXPLOSION: &str = "sprites/explosion.ron";
 const IMAGE_PUSH_ENTER: &str = "sprites/push_enter.png";
 const CONFIG_PUSH_ENTER: &str = "sprites/push_enter.ron";
 
+const IMAGE_MENU: &str = "sprites/menu.png";
+const CONFIG_MENU: &str = "sprites/menu.ron";
+
 const IMAGE_BACKGROUND: &str = "sprites/background.png";
 const IMAGE_BACKGROUND2: &str = "sprites/background2.png";
 const IMAGE_BACKGROUND3: &str = "sprites/background3.png";
@@ -87,6 +90,10 @@ pub fn load_ship_thrusters_spritesheet(world: &mut World) -> Handle<SpriteSheet>
 
 pub fn load_bullets_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
     load_texture(world, IMAGE_BULLETS, CONFIG_BULLETS)
+}
+
+pub fn load_menu_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
+    load_texture(world, IMAGE_MENU, CONFIG_MENU)
 }
 
 pub fn load_explosion_spritesheet(world: &mut World) -> Handle<SpriteSheet> {
