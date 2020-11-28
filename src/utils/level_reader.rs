@@ -6,6 +6,7 @@ use amethyst::core::math::Point3;
 use std::collections::HashMap;
 use crate::utils::sprites::NO_TILE_ID;
 use crate::entities::blade_saw::BladeSaw;
+use crate::utils::sprites::sprite_to_entities::COIN;
 
 pub fn read_level(lvl_number: usize) -> LevelConfig {
     let input_path = format!(
@@ -35,12 +36,14 @@ pub struct LevelConfig {
     pub start_y: u32,
     pub tiles: HashMap<Point3<u32>,usize>,
     pub blade_saws: Vec<BladeSaw>,
-    pub text: String
+    pub text: String,
+    pub coin_nb: usize
 }
 
 impl LevelConfig {
     fn new(level: TiledLevel) -> Self {
         let mut tiles: HashMap<Point3<u32>,usize> = HashMap::new();
+        let mut coin_nb = 0;
         let mut blade_saws: Vec<BladeSaw> = Vec::new();
         for layer in level.layers {
             let z = get_z_from_layer_name(layer.name.as_str());
@@ -56,6 +59,9 @@ impl LevelConfig {
                         };
                         if tile_number != NO_TILE_ID && tile_number > 0 {
                             tiles.insert(Point3::new(tile_x, tile_y, tile_z), (tile_number - 1) as usize);
+                            if tile_number - 1 == COIN as i32 {
+                                coin_nb +=1 ;
+                            }
                         }
                     }
                 }
@@ -86,6 +92,7 @@ impl LevelConfig {
             tiles,
             blade_saws,
             text: level.properties.iter().filter(|e| e.name == "text".to_string()).next().unwrap().value.to_string(),
+            coin_nb
         }
     }
 }

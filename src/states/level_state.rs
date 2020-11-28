@@ -7,7 +7,7 @@ use amethyst::assets::Handle;
 use std::fs::File;
 use serde_json::from_reader;
 use std::collections::HashMap;
-use crate::entities::ship::{Ship, ShipParent, Thrusters, ShipPowerLeftNumber, ShipLife, ShipFuel, ShipPowerRightNumber};
+use crate::entities::ship::{Ship, ShipParent, Thrusters, ShipPowerLeftNumber, ShipLife, ShipFuel, ShipPowerRightNumber, Coin};
 use crate::resources::main_resource::{MainResource, MainSprites};
 use crate::utils::sprites::sprite_to_entities::{sprite_to_colliders, is_landing_platform_start, sprite_to_canon, is_arrival, BLADE_SAW_SPRITE, sprite_to_bonus_kind};
 use crate::entities::collision::{LandingPlatform, Arrival};
@@ -29,7 +29,7 @@ pub struct LevelState{
     pub level_nb: usize
 }
 
-const MAX_LVL: usize = 2;
+const MAX_LVL: usize = 3;
 
 impl SimpleState for LevelState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
@@ -71,18 +71,19 @@ fn load_level(lvl_number: usize, world: &mut World) {
     let numbers_spritesheet_handle = load_numbers_spritesheet(world);
 
     initialize_level_tileset(world, level_spritesheet_handle, &level);
-    initialize_colliders_with_entitites(world, &level, misc_spritesheet_handle);
+    initialize_colliders_with_entitites(world, &level, misc_spritesheet_handle.clone());
     let ship = initialize_ship(world, &level, ship_spritesheet_handle);
     initialize_camera(world, ship);
-    let mut ship_resource = MainResource::new_from_level(Some(level), lvl_number);
-    ship_resource.sprites = Some(MainSprites { explosion_sprite_render: ship_explosion_handle, bullet_sprite_render: bullet_spritesheet_handle });
-    world.insert(ship_resource);
     world.exec(|mut creator: UiCreator<'_>| {
         creator.create("ui/ui.ron", ());
     });
-    initialise_level_ui(world, numbers_spritesheet_handle.clone(), lvl_number);
-    initialise_power_ui(world, numbers_spritesheet_handle);
-    initialise_life_and_fuel_ui(world);
+    initialize_level_ui(world, numbers_spritesheet_handle.clone(), lvl_number);
+    initialize_power_ui(world, numbers_spritesheet_handle);
+    initialize_life_and_fuel_ui(world);
+    initialize_coins_ui(world, &level, misc_spritesheet_handle);
+    let mut ship_resource = MainResource::new_from_level(Some(level), lvl_number);
+    ship_resource.sprites = Some(MainSprites { explosion_sprite_render: ship_explosion_handle, bullet_sprite_render: bullet_spritesheet_handle });
+    world.insert(ship_resource);
 }
 
 fn initialize_colliders_with_entitites(world: &mut World, level: &LevelConfig, sprite_sheet_handle: Handle<SpriteSheet>) {
@@ -225,7 +226,7 @@ pub fn initialize_camera(world: &mut World, ship: Entity) {
         .build();
 }
 
-fn initialise_power_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
+fn initialize_power_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
     let mut power_nb_left_transform = UiTransform::new(
         "power_left".to_string(),
         Anchor::BottomLeft,
@@ -273,7 +274,7 @@ fn initialise_power_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
         .build();
 }
 
-fn initialise_level_ui(world: &mut World, spritesheet: Handle<SpriteSheet>, lvl_number: usize) {
+fn initialize_level_ui(world: &mut World, spritesheet: Handle<SpriteSheet>, lvl_number: usize) {
     let level_sprites = format_lvl_number(lvl_number);
     let mut level_nb_left_transform = UiTransform::new(
         "level_left".to_string(),
@@ -329,7 +330,7 @@ fn format_lvl_number(lvl_number: usize) -> (usize, usize) {
     (0, lvl_nb_str.parse().unwrap())
 }
 
-fn initialise_life_and_fuel_ui(world: &mut World) {
+fn initialize_life_and_fuel_ui(world: &mut World) {
     let power_spritesheet_handle = load_power_spritesheet(world);
     for life_point in 0..3 {
         let mut life_point_transform = UiTransform::new(
@@ -373,6 +374,31 @@ fn initialise_life_and_fuel_ui(world: &mut World) {
             .with(UiImage::Sprite(SpriteRender {
                 sprite_sheet: power_spritesheet_handle.clone(),
                 sprite_number: 0,
+            }))
+            .build();
+    }
+}
+
+fn initialize_coins_ui(world: &mut World, config: &LevelConfig, spritesheet: Handle<SpriteSheet>) {
+    for coin in 0..config.coin_nb {
+        let mut coins_transform = UiTransform::new(
+            format!("coin_{}", coin.to_string()),
+            Anchor::BottomLeft,
+            Anchor::BottomLeft,
+            0.10279545454 + (coin as f32 * (0.04545454545 + 0.00008454545 )),
+            0.0716590909,
+            10.,
+            0.04545454545,
+            0.04845454545,
+        );
+        coins_transform.scale_mode = ScaleMode::Percent;
+        world
+            .create_entity()
+            .with(coins_transform)
+            .with(Coin{ coin_id: coin + 1 })
+            .with(UiImage::Sprite(SpriteRender {
+                sprite_sheet: spritesheet.clone(),
+                sprite_number: 87,
             }))
             .build();
     }

@@ -46,3 +46,10 @@ impl Component for ShipFuel {
     type Storage = DenseVecStorage<Self>;
 }
 
+pub struct Coin {
+    pub coin_id: usize
+}
+
+impl Component for Coin {
+    type Storage = DenseVecStorage<Self>;
+}

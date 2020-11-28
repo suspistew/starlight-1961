@@ -65,7 +65,6 @@ impl<'s> System<'s> for BonusSystem {
                     },
                     BonusKind::Wrench => {
                         main_resource.bonus_heal();
-                        main_resource.bonus_coin();
                     },
                     BonusKind::Coin => {
                         main_resource.bonus_coin();

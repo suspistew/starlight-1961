@@ -257,7 +257,7 @@ pub const BLADE_SAW_SPRITE: usize = 16;
 
 const WRENCH: usize = 99;
 const FUEL: usize = 98;
-const COIN: usize = 97;
+pub const COIN: usize = 97;
 
 
 const HORIZONTAL_PILLAR_BASEMENT_LEFT: usize = 110;
