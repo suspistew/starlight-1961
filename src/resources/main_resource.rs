@@ -27,7 +27,8 @@ pub struct MainResource {
     pub should_reset_plasma_timers: bool,
     pub should_reset_bonuses: bool,
     pub bullet_hit_timer: f32,
-    pub collected_coin: usize
+    pub collected_coin: usize,
+    pub should_go_to_next_level: bool
 }
 
 pub struct MainSprites {
@@ -55,7 +56,8 @@ impl MainResource {
             should_reset_plasma_timers: true,
             should_reset_bonuses: true,
             bullet_hit_timer: 0.,
-            collected_coin: 0
+            collected_coin: 0,
+            should_go_to_next_level: false
         }
     }
 

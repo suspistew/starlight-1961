@@ -117,7 +117,7 @@ fn main() -> amethyst::Result<()> {
         "menu_background_system",
         &[],
     ).with(
-        ScoreSystem.pausable(CurrentState::Level),
+        ScoreSystem::default().pausable(CurrentState::Level),
         "score_system",
         &[],
     ).with(

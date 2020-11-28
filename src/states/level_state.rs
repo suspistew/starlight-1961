@@ -45,11 +45,11 @@ impl SimpleState for LevelState {
 
     fn fixed_update(&mut self, data: StateData<'_, GameData<'_, '_>>) -> SimpleTrans {
         let world = data.world;
-        let (victory, current_level) = {
+        let (victory, current_level, should_go_to_next_level) = {
             let resource = world.read_resource::<MainResource>();
-            (resource.victory, resource.current_level)
+            (resource.victory, resource.current_level,resource.should_go_to_next_level)
         };
-        if victory {
+        if victory && should_go_to_next_level{
             let new_level =current_level + 1;
             if new_level <= MAX_LVL {
                 return Trans::Switch(Box::new(NextLevelState::new(new_level )));

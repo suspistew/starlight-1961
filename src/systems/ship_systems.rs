@@ -48,6 +48,7 @@ impl<'s> System<'s> for ShipSystem {
     );
 
     fn run(&mut self, (mut transforms, ships, ships_parent, input, mut sprites, mut main_resource, time,mut explosions,  entities, storage, sounds, audio_output): Self::SystemData) {
+        if main_resource.victory { return ;}
         self.play_fire_timer -= time.delta_seconds();
         if main_resource.bullet_hit_timer > 0. {
             main_resource.bullet_hit_timer -= time.delta_seconds();
