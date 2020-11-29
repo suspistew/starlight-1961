@@ -133,3 +133,10 @@ pub fn compute_is_eligible_for_collision(col1: &Colliders, col2: &Colliders) -> 
         && !(col1.min_y < col2.min_y && col1.max_y < col2.min_y && col1.min_y < col2.max_y && col1.max_y < col2.max_y)
         && !(col1.min_y > col2.min_y && col1.max_y > col2.min_y && col1.min_y > col2.max_y && col1.max_y > col2.max_y)
 }
+
+pub fn compute_ship_is_eligible_for_collision(col1: &Colliders, min_x: f32, max_x: f32, min_y: f32, max_y: f32) -> bool {
+    !(col1.min_x < min_x && col1.max_x < min_x && col1.min_x < max_x && col1.max_x < max_x)
+        && !(col1.min_x > min_x && col1.max_x > min_x && col1.min_x > max_x && col1.max_x > max_x)
+        && !(col1.min_y < min_y && col1.max_y < min_y && col1.min_y < max_y && col1.max_y < max_y)
+        && !(col1.min_y > min_y && col1.max_y > min_y && col1.min_y > max_y && col1.max_y > max_y)
+}

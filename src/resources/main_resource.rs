@@ -1,13 +1,14 @@
 use rand::Rng;
 use crate::entities::collision::{Colliders, Collider};
 use crate::utils::Point2D;
-use geo::Polygon;
+use geo::{Polygon, LineString, Point};
 use amethyst::core::math::UnitQuaternion;
 use amethyst::core::alga::linear::Similarity;
 use amethyst::assets::Handle;
 use amethyst::renderer::SpriteSheet;
 use core::cmp;
 use crate::utils::level_reader::LevelConfig;
+use geo::rotate::RotatePoint;
 
 pub struct MainResource {
     pub x_force: f32,
@@ -28,12 +29,12 @@ pub struct MainResource {
     pub should_reset_bonuses: bool,
     pub bullet_hit_timer: f32,
     pub collected_coin: usize,
-    pub should_go_to_next_level: bool
+    pub should_go_to_next_level: bool,
 }
 
 pub struct MainSprites {
     pub explosion_sprite_render: Handle<SpriteSheet>,
-    pub bullet_sprite_render: Handle<SpriteSheet>
+    pub bullet_sprite_render: Handle<SpriteSheet>,
 }
 
 impl MainResource {
@@ -57,18 +58,18 @@ impl MainResource {
             should_reset_bonuses: true,
             bullet_hit_timer: 0.,
             collected_coin: 0,
-            should_go_to_next_level: false
+            should_go_to_next_level: false,
         }
     }
 
-    pub fn bonus_heal(&mut self){
-        if self.ship_life < 3 { self.ship_life += 1 ;}
+    pub fn bonus_heal(&mut self) {
+        if self.ship_life < 3 { self.ship_life += 1; }
     }
-    pub fn bonus_coin(&mut self){
+    pub fn bonus_coin(&mut self) {
         self.collected_coin += 1;
     }
 
-    pub fn bonus_fuel(&mut self){
+    pub fn bonus_fuel(&mut self) {
         self.ship_fuel += 4. * 50.;
         if self.ship_fuel > 10. * 50. {
             self.ship_fuel = 10. * 50.;
@@ -80,7 +81,7 @@ impl MainResource {
     }
 
     pub fn new_from_level(config: Option<LevelConfig>, lvl_nb: usize) -> MainResource {
-        MainResource::new (0., 0., 1.0, config, lvl_nb)
+        MainResource::new(0., 0., 1.0, config, lvl_nb)
     }
 
     pub fn reset(&mut self) {
@@ -94,11 +95,11 @@ impl MainResource {
         self.ship_life = 3;
         self.ship_fuel = 10. * 50.;
         self.bullet_hit_timer = 0.;
-        self.should_reset_bonuses= true;
-        self.collected_coin= 0;
+        self.should_reset_bonuses = true;
+        self.collected_coin = 0;
     }
 
-    pub fn power(&mut self, delta_time: f32,  rotation: &UnitQuaternion<f32>) {
+    pub fn power(&mut self, delta_time: f32, rotation: &UnitQuaternion<f32>) {
         self.is_landed = false;
         self.y_force += delta_time * calculate_y_force(rotation.rotation().quaternion().k);
         self.x_force += delta_time * calculate_x_force(rotation.rotation().quaternion().k);
@@ -114,38 +115,75 @@ impl MainResource {
     }
 
     pub fn apply_gravity(&mut self, delta_time: f32) {
-        if self.is_landed {return;}
+        if self.is_landed { return; }
         self.y_force -= 1.5 * delta_time;
         if self.x_force > 0. {
             self.x_force -= 0.2 * delta_time;
-            if self.x_force < 0. { self.x_force = 0.}
-        }else if self.x_force < 0. {
+            if self.x_force < 0. { self.x_force = 0. }
+        } else if self.x_force < 0. {
             self.x_force += 0.2 * delta_time;
-            if self.x_force > 0. { self.x_force = 0.}
+            if self.x_force > 0. { self.x_force = 0. }
         }
 
         self.power = 0;
     }
 
-    pub fn bullet_hit(&mut self){
+    pub fn bullet_hit(&mut self) {
         if self.ship_life > 0 {
             self.ship_life -= 1;
         }
         self.bullet_hit_timer = 0.3;
     }
 
-    pub fn get_colliders_polygons_for_collision(&self, x: f32, y:f32) -> Vec<Polygon<f32>> {
-        self.get_colliders_for_collision(x, y).to_owned_polygons()
+    pub fn get_colliders_for_collision(&self, x: f32, y: f32) -> Vec<Polygon<f32>> {
+        let a = Point2D { x: x + 14., y };
+        let b = Point2D { x: x + 2., y: y - 12. };
+        let c = Point2D { x: x + 2., y: y - 15. };
+        let d = Point2D { x: x + 6., y: y - 19. };
+        let e = Point2D { x, y: y - 28. };
+        let f = Point2D { x, y: y - 31. };
+        let g = Point2D { x: x + 9., y: y - 31. };
+        let h = Point2D { x: x + 14., y: y - 26. };
+        let i = Point2D { x: x + 17., y: y - 26. };
+        let j = Point2D { x: x + 22., y: y - 31. };
+        let k = Point2D { x: x + 31., y: y - 31. };
+        let l = Point2D { x: x + 31., y: y - 28. };
+        let m = Point2D { x: x + 25., y: y - 19. };
+        let n = Point2D { x: x + 29., y: y - 15. };
+        let o = Point2D { x: x + 29., y: y - 12. };
+        let p = Point2D { x: x + 17., y };
+
+        let mut line_string = LineString::from(
+            vec![
+                (a.x, a.y),
+                (b.x, b.y),
+                (c.x, c.y),
+                (d.x, d.y),
+                (e.x, e.y),
+                (f.x, f.y),
+                (g.x, g.y),
+                (h.x, h.y),
+                (i.x, i.y),
+                (j.x, j.y),
+                (k.x, k.y),
+                (l.x, l.y),
+                (m.x, m.y),
+                (n.x, n.y),
+                (o.x, o.y),
+                (p.x, p.y),
+                (a.x, a.y),
+            ]
+        );
+        line_string = line_string.rotate_around_point(self.current_rotation_angle, Point::new(x + 16., y-16.));
+        vec![Polygon::new(
+            line_string
+            ,
+            vec![],
+        )]
     }
 
-    pub fn get_colliders_for_collision(&self, x: f32, y:f32) -> Colliders {
-        let main_collider = Collider::new(Point2D{x: x+2., y: y-2.}, 28., -28.);
-        let colliders = Colliders::from_vec(vec![main_collider]);
-        colliders
-    }
-
-    pub fn get_colliders_polygons_for_landing(&self, x: f32, y:f32) -> Vec<Polygon<f32>> {
-        let main_collider = Collider::new(Point2D{x, y}, 32., -32.);
+    pub fn get_colliders_polygons_for_landing(&self, x: f32, y: f32) -> Vec<Polygon<f32>> {
+        let main_collider = Collider::new(Point2D { x, y }, 32., -32.);
         let colliders = Colliders::from_vec(vec![main_collider]);
         colliders.to_owned_polygons()
     }

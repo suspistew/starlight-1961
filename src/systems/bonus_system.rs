@@ -49,7 +49,7 @@ impl<'s> System<'s> for BonusSystem {
         }
         let mut ship_polygon = Vec::new();
         for (_ship, transform) in (&ships, &transforms).join() {
-            ship_polygon = main_resource.get_colliders_polygons_for_collision(transform.translation().x, transform.translation().y);
+            ship_polygon = main_resource.get_colliders_for_collision(transform.translation().x, transform.translation().y);
         }
         for (bonus, transform, sprite) in (&mut bonuses, &mut transforms, &mut sprites ).join(){
             transform.append_translation_xyz(0., self.direction_y * time.delta_seconds(), 0.);

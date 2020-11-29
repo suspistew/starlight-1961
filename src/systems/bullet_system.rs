@@ -46,7 +46,7 @@ impl<'s> System<'s> for BulletSystem {
         self.play_air_timer -= time.delta_seconds();
         let mut ship_polygon = Vec::new();
         for (_ship, transform) in (&ships, &transforms).join() {
-            ship_polygon = main_resource.get_colliders_polygons_for_collision(transform.translation().x, transform.translation().y);
+            ship_polygon = main_resource.get_colliders_for_collision(transform.translation().x, transform.translation().y);
         }
         let mut bullet_vec: Vec<(u32, Colliders)> = Vec::new();
         for (bullet, transform, entity) in (&mut bullets, &mut transforms, &entities).join() {

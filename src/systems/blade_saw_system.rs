@@ -26,7 +26,7 @@ impl<'s> System<'s> for BladeSawSystem {
         }
         let mut ship_polygon = Vec::new();
         for (_ship, transform) in (&ships, &transforms).join() {
-            ship_polygon = main_resource.get_colliders_polygons_for_collision(transform.translation().x, transform.translation().y);
+            ship_polygon = main_resource.get_colliders_for_collision(transform.translation().x, transform.translation().y);
         }
         for (blade, transform) in (&mut blade_parents, &mut transforms).join() {
             transform.append_translation_xyz(50. * blade.direction_x * time.delta_seconds(), 50. * blade.direction_y * time.delta_seconds(), 0.);
