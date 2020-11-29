@@ -29,7 +29,7 @@ pub struct LevelState{
     pub level_nb: usize
 }
 
-const MAX_LVL: usize = 5;
+const MAX_LVL: usize = 10;
 
 impl SimpleState for LevelState {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {

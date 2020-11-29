@@ -1,12 +1,12 @@
 List((
-	texture_width: 1600,
-	texture_height: 1600,
+	texture_width: 640,
+	texture_height: 640,
 	sprites: [
     		    (
             			x: 0,
             			y: 0,
-            			width: 1600,
-            			height: 1600,
+            			width: 640,
+            			height: 640,
             		)
                  ]
                ))
