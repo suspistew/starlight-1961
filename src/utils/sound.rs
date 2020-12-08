@@ -4,7 +4,7 @@ use amethyst::audio::{AudioSink, OggFormat, Source, SourceHandle};
 use amethyst::core::ecs::{World, WorldExt};
 use std::{iter::Cycle, vec::IntoIter};
 
-const MENU_MUSIC: &'static [&'static str] = &["audio/menu_music.ogg"];
+const MENU_MUSIC: &[&str] = &["audio/menu_music.ogg"];
 
 const EXPLOSION: &str = "audio/explosion.ogg";
 const FIRE: &str = "audio/fire.ogg";

@@ -1,4 +1,4 @@
-use crate::entities::bonus::{Bonus, BonusKind};
+use crate::entities::bonus::{BonusKind};
 use crate::entities::canons::{Canon, CanonKind};
 use crate::entities::collision::{Collider, Colliders};
 use crate::utils::sprites::plasma_doors::*;
@@ -479,7 +479,7 @@ pub fn init_bullet_collider(kind: &CanonKind, x: f32, y: f32) -> Colliders {
     }
 }
 
-pub fn init_bonus_collider(kind: &BonusKind, x: f32, y: f32) -> Colliders {
+pub fn init_bonus_collider(_kind: &BonusKind, x: f32, y: f32) -> Colliders {
     Colliders::from_vec(vec![Collider::new(
         Point2D {
             x: x + 4.,

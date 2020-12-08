@@ -72,72 +72,56 @@ impl LevelConfig {
                         DataType::BladeSaw => blade_saws.push(BladeSaw {
                             direction_x: entity
                                 .properties
-                                .iter()
-                                .filter(|e| e.name == "direction_x".to_string())
-                                .next()
+                                .iter().find(|e| e.name == *"direction_x")
                                 .unwrap()
                                 .value
                                 .parse()
                                 .unwrap(),
                             direction_y: entity
                                 .properties
-                                .iter()
-                                .filter(|e| e.name == "direction_y".to_string())
-                                .next()
+                                .iter().find(|e| e.name == *"direction_y")
                                 .unwrap()
                                 .value
                                 .parse()
                                 .unwrap(),
                             start_x: entity
                                 .properties
-                                .iter()
-                                .filter(|e| e.name == "start_x".to_string())
-                                .next()
+                                .iter().find(|e| e.name == *"start_x")
                                 .unwrap()
                                 .value
                                 .parse()
                                 .unwrap(),
                             start_y: entity
                                 .properties
-                                .iter()
-                                .filter(|e| e.name == "start_y".to_string())
-                                .next()
+                                .iter().find(|e| e.name == *"start_y")
                                 .unwrap()
                                 .value
                                 .parse()
                                 .unwrap(),
                             min_x: entity
                                 .properties
-                                .iter()
-                                .filter(|e| e.name == "min_x".to_string())
-                                .next()
+                                .iter().find(|e| e.name == *"min_x")
                                 .unwrap()
                                 .value
                                 .parse()
                                 .unwrap(),
                             min_y: entity
                                 .properties
-                                .iter()
-                                .filter(|e| e.name == "min_y".to_string())
-                                .next()
+                                .iter().find(|e| e.name == *"min_y")
                                 .unwrap()
                                 .value
                                 .parse()
                                 .unwrap(),
                             max_y: entity
                                 .properties
-                                .iter()
-                                .filter(|e| e.name == "max_y".to_string())
-                                .next()
+                                .iter().find(|e| e.name == *"max_y")
                                 .unwrap()
                                 .value
                                 .parse()
                                 .unwrap(),
                             max_x: entity
                                 .properties
-                                .iter()
-                                .filter(|e| e.name == "max_x".to_string())
-                                .next()
+                                .iter().find(|e| e.name == *"max_x")
                                 .unwrap()
                                 .value
                                 .parse()
@@ -153,18 +137,14 @@ impl LevelConfig {
             width: level.width,
             start_x: level
                 .properties
-                .iter()
-                .filter(|e| e.name == "start_x".to_string())
-                .next()
+                .iter().find(|e| e.name == *"start_x")
                 .unwrap()
                 .value
                 .parse()
                 .unwrap(),
             start_y: level
                 .properties
-                .iter()
-                .filter(|e| e.name == "start_y".to_string())
-                .next()
+                .iter().find(|e| e.name == *"start_y")
                 .unwrap()
                 .value
                 .parse()
@@ -173,9 +153,7 @@ impl LevelConfig {
             blade_saws,
             text: level
                 .properties
-                .iter()
-                .filter(|e| e.name == "text".to_string())
-                .next()
+                .iter().find(|e| e.name == *"text")
                 .unwrap()
                 .value
                 .to_string(),

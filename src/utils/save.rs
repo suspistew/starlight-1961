@@ -24,7 +24,7 @@ pub fn read_saved_level() -> Option<StarlightSave> {
             let reader = BufReader::new(file.unwrap());
             return match from_reader(reader) {
                 Ok(save) => save,
-                Err(e) => None,
+                Err(_e) => None,
             };
         }
     }
@@ -39,7 +39,7 @@ pub fn save_progress(level_number: usize) {
     if !file_already_exist || fs::remove_file(path).is_ok() {
         if let Ok(mut target_file) = File::create(path) {
             let to_save = to_string_pretty(&StarlightSave { save: level_number }).unwrap();
-            target_file.write_all(to_save.to_string().as_bytes());
+            target_file.write_all(to_save.as_bytes());
         }
     }
 }

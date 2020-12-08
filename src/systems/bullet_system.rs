@@ -15,7 +15,7 @@ use amethyst::core::ecs::{
 };
 use amethyst::core::math::Vector3;
 use amethyst::core::{Time, Transform};
-use geo::Polygon;
+
 
 const DEFAULT_AIR_TIMER: f32 = 0.2;
 
@@ -142,12 +142,12 @@ impl<'s> System<'s> for BulletSystem {
 
         let joined: Vec<_> = (&colliders, !&bullets, !&canons)
             .join()
-            .filter(|(a, b, c)| {
+            .filter(|(a, _b, _c)| {
                 return bullet_vec
                     .iter()
-                    .any(|(id, collider)| compute_is_eligible_for_collision(*a, &collider));
+                    .any(|(_id, collider)| compute_is_eligible_for_collision(*a, &collider));
             })
-            .flat_map(|(a, b, c)| a.to_owned_polygons())
+            .flat_map(|(a, _b, _c)| a.to_owned_polygons())
             .collect();
         for (id, col) in bullet_vec.iter() {
             if are_colliding(&col.to_owned_polygons(), &joined) {

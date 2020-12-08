@@ -120,7 +120,7 @@ pub fn add_animated_backgrounds(
         sprite_number: 0,
     };
     let sprite_render_2 = SpriteRender {
-        sprite_sheet: background.clone(),
+        sprite_sheet: background,
         sprite_number: 0,
     };
     let mut t = Transform::default();
@@ -179,7 +179,7 @@ fn add_push_enter_text(world: &mut World) -> Entity {
         0.,
         10.,
         1.,
-        0.09722222222,
+        0.097_222_224,
     );
     transform.scale_mode = ScaleMode::Percent;
     world
@@ -195,7 +195,7 @@ fn add_push_enter_text(world: &mut World) -> Entity {
 
 fn add_new_game_continue(world: &mut World, save: &Option<StarlightSave>) -> Entity {
     let sprite = load_menu_spritesheet(world);
-    let shift = if save.is_some() { 0.12027777777 } else { 0. };
+    let shift = if save.is_some() { 0.120_277_78 } else { 0. };
     let mut transform = UiTransform::new(
         "new_game".to_string(),
         Anchor::Middle,
@@ -203,8 +203,8 @@ fn add_new_game_continue(world: &mut World, save: &Option<StarlightSave>) -> Ent
         0.,
         0. - shift,
         10.,
-        0.2713068182,
-        0.09027777777,
+        0.271_306_8,
+        0.090_277_776,
     );
     transform.scale_mode = ScaleMode::Percent;
     world
@@ -224,14 +224,14 @@ fn add_new_game_continue(world: &mut World, save: &Option<StarlightSave>) -> Ent
             0.,
             0.,
             10.,
-            0.2713068182,
-            0.09027777777,
+            0.271_306_8,
+            0.090_277_776,
         );
         transform_continue.scale_mode = ScaleMode::Percent;
         world
             .create_entity()
             .with(UiImage::Sprite(SpriteRender {
-                sprite_sheet: sprite.clone(),
+                sprite_sheet: sprite,
                 sprite_number: 1,
             }))
             .with(transform_continue)
@@ -248,7 +248,7 @@ fn init_arrow(world: &mut World, shif: usize) -> Entity {
         Anchor::Middle,
         Anchor::Middle,
         -0.1568181,
-        0. - shif as f32 * 0.12027777777,
+        0. - shif as f32 * 0.120_277_78,
         10.,
         0.05555555,
         0.05555555,

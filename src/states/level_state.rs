@@ -23,13 +23,13 @@ use crate::utils::sprites::sprite_to_entities::{
     sprite_to_colliders, BLADE_SAW_SPRITE,
 };
 use crate::utils::sprites::*;
-use amethyst::core::math::Point3;
+
 use amethyst::ui::{Anchor, ScaleMode, UiCreator, UiImage, UiTransform};
-use amethyst::utils::application_root_dir;
-use serde_json::from_reader;
+
+
 use std::borrow::Borrow;
-use std::collections::HashMap;
-use std::fs::File;
+
+
 
 pub struct LevelState {
     pub level_nb: usize,
@@ -67,7 +67,7 @@ impl SimpleState for LevelState {
                 return Trans::Switch(Box::new(EndLevelState));
             }
         }
-        return Trans::None;
+        Trans::None
     }
 }
 
@@ -180,7 +180,7 @@ fn initialize_colliders_with_entitites(
             .with(parent_transform)
             .build();
 
-        let mut transform = Transform::default();
+        let transform = Transform::default();
 
         world
             .create_entity()
@@ -224,7 +224,7 @@ fn initialize_ship(
     };
 
     let thrusters_sprite_render = SpriteRender {
-        sprite_sheet: sprite_sheet_handle.clone(),
+        sprite_sheet: sprite_sheet_handle,
         sprite_number: 5,
     };
 
@@ -278,11 +278,11 @@ fn initialize_power_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
         "power_left".to_string(),
         Anchor::BottomLeft,
         Anchor::BottomLeft,
-        0.82954545454,
-        0.02056944444,
+        0.829_545_44,
+        0.020_569_444,
         10.,
-        0.01420454545,
-        0.02430555555,
+        0.014_204_546,
+        0.024_305_556,
     );
     power_nb_left_transform.scale_mode = ScaleMode::Percent;
 
@@ -300,11 +300,11 @@ fn initialize_power_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
         "power_right".to_string(),
         Anchor::BottomLeft,
         Anchor::BottomLeft,
-        0.84754545454,
-        0.02056944444,
+        0.847_545_44,
+        0.020_569_444,
         10.,
-        0.01420454545,
-        0.02430555555,
+        0.014_204_546,
+        0.024_305_556,
     );
     power_nb_right_transform.scale_mode = ScaleMode::Percent;
 
@@ -312,7 +312,7 @@ fn initialize_power_ui(world: &mut World, spritesheet: Handle<SpriteSheet>) {
         .create_entity()
         .with(power_nb_right_transform)
         .with(UiImage::Sprite(SpriteRender {
-            sprite_sheet: spritesheet.clone(),
+            sprite_sheet: spritesheet,
             sprite_number: 0,
         }))
         .with(ShipPowerRightNumber)
@@ -325,11 +325,11 @@ fn initialize_level_ui(world: &mut World, spritesheet: Handle<SpriteSheet>, lvl_
         "level_left".to_string(),
         Anchor::BottomLeft,
         Anchor::BottomLeft,
-        0.64488636363,
-        0.02056944444,
+        0.644_886_4,
+        0.020_569_444,
         10.,
-        0.01420454545,
-        0.02430555555,
+        0.014_204_546,
+        0.024_305_556,
     );
     level_nb_left_transform.scale_mode = ScaleMode::Percent;
 
@@ -346,11 +346,11 @@ fn initialize_level_ui(world: &mut World, spritesheet: Handle<SpriteSheet>, lvl_
         "level_right".to_string(),
         Anchor::BottomLeft,
         Anchor::BottomLeft,
-        0.66088636363,
-        0.02056944444,
+        0.660_886_35,
+        0.020_569_444,
         10.,
-        0.01420454545,
-        0.02430555555,
+        0.014_204_546,
+        0.024_305_556,
     );
     level_nb_right_transform.scale_mode = ScaleMode::Percent;
 
@@ -358,7 +358,7 @@ fn initialize_level_ui(world: &mut World, spritesheet: Handle<SpriteSheet>, lvl_
         .create_entity()
         .with(level_nb_right_transform)
         .with(UiImage::Sprite(SpriteRender {
-            sprite_sheet: spritesheet.clone(),
+            sprite_sheet: spritesheet,
             sprite_number: level_sprites.1,
         }))
         .build();
@@ -382,11 +382,11 @@ fn initialize_life_and_fuel_ui(world: &mut World) {
             format!("life_{}", life_point.to_string()),
             Anchor::BottomLeft,
             Anchor::BottomLeft,
-            0.17755681818 + (life_point as f32 * (0.00426136363 + 0.01420454545)),
-            0.01215277777,
+            0.177_556_81 + (life_point as f32 * (0.004_261_363_8 + 0.014_204_546)),
+            0.012_152_778,
             10.,
-            0.01420454545,
-            0.04166666666,
+            0.014_204_546,
+            0.041_666_668,
         );
         life_point_transform.scale_mode = ScaleMode::Percent;
         world
@@ -407,11 +407,11 @@ fn initialize_life_and_fuel_ui(world: &mut World) {
             format!("fuel_{}", fuel_point.to_string()),
             Anchor::BottomLeft,
             Anchor::BottomLeft,
-            0.32244318181 + (fuel_point as f32 * (0.00426136363 + 0.01420454545)),
-            0.01215277777,
+            0.322_443_2 + (fuel_point as f32 * (0.004_261_363_8 + 0.014_204_546)),
+            0.012_152_778,
             10.,
-            0.01420454545,
-            0.04166666666,
+            0.014_204_546,
+            0.041_666_668,
         );
         fuel_point_transform.scale_mode = ScaleMode::Percent;
         world
@@ -434,11 +434,11 @@ fn initialize_coins_ui(world: &mut World, config: &LevelConfig, spritesheet: Han
             format!("coin_{}", coin.to_string()),
             Anchor::BottomLeft,
             Anchor::BottomLeft,
-            0.10279545454 + (coin as f32 * (0.04545454545 + 0.00008454545)),
-            0.0716590909,
+            0.102_795_45 + (coin as f32 * (0.045_454_547 + 0.00008454545)),
+            0.071_659_09,
             10.,
-            0.04545454545,
-            0.04845454545,
+            0.045_454_547,
+            0.048_454_545,
         );
         coins_transform.scale_mode = ScaleMode::Percent;
         world

@@ -47,7 +47,7 @@ impl<'s> System<'s> for MenuBackgroundSystem {
             mut sprites,
             mut images,
             time,
-            mut entities,
+            entities,
             storage,
             sounds,
             audio_output,
@@ -86,7 +86,7 @@ impl<'s> System<'s> for MenuBackgroundSystem {
             self.blink_delay = 0.5;
         }
 
-        for (entity, sound) in (&*entities, &menu_sounds).join() {
+        for (entity, _sound) in (&*entities, &menu_sounds).join() {
             entities.delete(entity);
             play_bonus(&*sounds, &storage, audio_output.as_deref());
         }
