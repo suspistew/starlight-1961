@@ -1,9 +1,28 @@
-mod states;
 mod entities;
-mod systems;
 mod resources;
+mod states;
+mod systems;
 mod utils;
 
+use crate::states::main_menu_state::MainMenuState;
+use crate::states::CurrentState;
+use crate::systems::blade_saw_system::BladeSawSystem;
+use crate::systems::bonus_system::BonusSystem;
+use crate::systems::bullet_system::BulletSystem;
+use crate::systems::canon_system::CanonSystem;
+use crate::systems::collision_system::CollisionSystem;
+use crate::systems::doors::plasma_door_system::PlasmaDoorSystem;
+use crate::systems::explosion_systems::ExplosionSystem;
+use crate::systems::landing_system::LandingSystem;
+use crate::systems::menu_background_system::MenuBackgroundSystem;
+use crate::systems::score_system::ScoreSystem;
+use crate::systems::ship_systems::ShipSystem;
+use crate::systems::thruster_system::ThrustersSystem;
+use crate::systems::ui_system::UISystem;
+use crate::utils::sound::Sounds;
+use amethyst::audio::{AudioBundle, DjSystem, DjSystemDesc};
+use amethyst::core::frame_limiter::FrameRateLimitStrategy;
+use amethyst::renderer::palette::Srgba;
 use amethyst::{
     core::transform::TransformBundle,
     input::{InputBundle, StringBindings},
@@ -16,25 +35,6 @@ use amethyst::{
     ui::{RenderUi, UiBundle},
     utils::application_root_dir,
 };
-use crate::systems::ship_systems::ShipSystem;
-use crate::systems::collision_system::CollisionSystem;
-use crate::systems::thruster_system::ThrustersSystem;
-use crate::systems::landing_system::LandingSystem;
-use amethyst::renderer::palette::Srgba;
-use crate::systems::explosion_systems::ExplosionSystem;
-use crate::systems::canon_system::CanonSystem;
-use crate::systems::bullet_system::BulletSystem;
-use crate::systems::doors::plasma_door_system::PlasmaDoorSystem;
-use crate::systems::ui_system::UISystem;
-use amethyst::core::frame_limiter::FrameRateLimitStrategy;
-use crate::states::main_menu_state::MainMenuState;
-use crate::systems::menu_background_system::MenuBackgroundSystem;
-use crate::systems::score_system::ScoreSystem;
-use crate::states::CurrentState;
-use crate::systems::blade_saw_system::BladeSawSystem;
-use crate::systems::bonus_system::BonusSystem;
-use amethyst::audio::{AudioBundle, DjSystemDesc, DjSystem};
-use crate::utils::sound::Sounds;
 
 fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
@@ -46,8 +46,8 @@ fn main() -> amethyst::Result<()> {
     let key_bindings_path = app_root.join("assets/config/bindings.ron");
 
     let (r, g, b, a) = Srgba::new(31. / 255., 54. / 255., 50. / 255., 1.)
-         .into_linear()
-         .into_components();
+        .into_linear()
+        .into_components();
 
     let game_data = GameDataBuilder::default()
         .with_bundle(TransformBundle::new())?
@@ -58,11 +58,10 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(
             RenderingBundle::<DefaultBackend>::new()
                 .with_plugin(
-                    RenderToWindow::from_config_path(display_config)?
-                        .with_clear([r, g, b, a]),
+                    RenderToWindow::from_config_path(display_config)?.with_clear([r, g, b, a]),
                 )
                 .with_plugin(RenderUi::default())
-                .with_plugin(RenderFlat2D::default())
+                .with_plugin(RenderFlat2D::default()),
         )?
         .with_bundle(AudioBundle::default())?
         .with(
@@ -104,31 +103,33 @@ fn main() -> amethyst::Result<()> {
             BulletSystem::default().pausable(CurrentState::Level),
             "bullet_system",
             &[],
-        ).with(
-        PlasmaDoorSystem::default().pausable(CurrentState::Level),
-        "plasma_door_system",
-        &[],
-    ).with(
-        UISystem.pausable(CurrentState::Level),
-        "ui_system",
-        &[],
-    ).with(
-        MenuBackgroundSystem::default().pausable(CurrentState::MainMenu),
-        "menu_background_system",
-        &[],
-    ).with(
-        ScoreSystem::default().pausable(CurrentState::Level),
-        "score_system",
-        &[],
-    ).with(
-        BladeSawSystem.pausable(CurrentState::Level),
-        "blade_saw_system",
-        &[],
-    ).with(
-        BonusSystem::default().pausable(CurrentState::Level),
-        "bonus_system",
-        &[],
-    );;
+        )
+        .with(
+            PlasmaDoorSystem::default().pausable(CurrentState::Level),
+            "plasma_door_system",
+            &[],
+        )
+        .with(UISystem.pausable(CurrentState::Level), "ui_system", &[])
+        .with(
+            MenuBackgroundSystem::default().pausable(CurrentState::MainMenu),
+            "menu_background_system",
+            &[],
+        )
+        .with(
+            ScoreSystem::default().pausable(CurrentState::Level),
+            "score_system",
+            &[],
+        )
+        .with(
+            BladeSawSystem.pausable(CurrentState::Level),
+            "blade_saw_system",
+            &[],
+        )
+        .with(
+            BonusSystem::default().pausable(CurrentState::Level),
+            "bonus_system",
+            &[],
+        );
 
     let mut game = Application::build(resources, MainMenuState::default())?
         .with_frame_limit(FrameRateLimitStrategy::Sleep, 60)

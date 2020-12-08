@@ -1,12 +1,13 @@
 use amethyst::core::ecs::{Component, DenseVecStorage};
 
-pub enum DoorState{
-    Open, Closed
+pub enum DoorState {
+    Open,
+    Closed,
 }
 
-pub struct PlasmaDoor{
+pub struct PlasmaDoor {
     pub initial_sprite: usize,
-    pub state: DoorState
+    pub state: DoorState,
 }
 
 impl Component for PlasmaDoor {

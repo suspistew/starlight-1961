@@ -7,7 +7,7 @@ impl Component for BladeSawSprite {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct BladeSaw{
+pub struct BladeSaw {
     pub direction_x: f32,
     pub direction_y: f32,
     pub start_x: f32,
