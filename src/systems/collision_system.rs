@@ -1,7 +1,7 @@
 use crate::entities::bonus::Bonus;
 use crate::entities::canons::Bullet;
 use crate::entities::collision::{
-    are_colliding, compute_is_eligible_for_collision, compute_ship_is_eligible_for_collision,
+    are_colliding, compute_ship_is_eligible_for_collision,
     Colliders, LandingPlatform,
 };
 use crate::entities::doors::{DoorState, PlasmaDoor};

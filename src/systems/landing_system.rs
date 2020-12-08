@@ -53,10 +53,8 @@ impl<'s> System<'s> for LandingSystem {
                         ship_resource.is_landed = true;
                         ship_resource.y_force = 0.;
                         ship_resource.x_force = 0.;
-                    } else {
-                        if ship_resource.y_force < 0. {
-                            ship_resource.ship_life -= ship_resource.ship_life;
-                        }
+                    } else if ship_resource.y_force < 0. {
+                        ship_resource.ship_life -= ship_resource.ship_life;
                     }
                 }
             }

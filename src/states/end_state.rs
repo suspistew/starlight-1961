@@ -50,7 +50,7 @@ fn initialise_texts(world: &mut World) {
         .create_entity()
         .with(end_transform)
         .with(UiText::new(
-            font.clone(),
+            font,
             "Congratulation !".to_string(),
             [1., 1., 1., 1.],
             80.,

@@ -20,7 +20,7 @@ use crate::systems::ship_systems::ShipSystem;
 use crate::systems::thruster_system::ThrustersSystem;
 use crate::systems::ui_system::UISystem;
 use crate::utils::sound::Sounds;
-use amethyst::audio::{AudioBundle, DjSystem, DjSystemDesc};
+use amethyst::audio::{AudioBundle, DjSystem};
 use amethyst::core::frame_limiter::FrameRateLimitStrategy;
 use amethyst::renderer::palette::Srgba;
 use amethyst::{

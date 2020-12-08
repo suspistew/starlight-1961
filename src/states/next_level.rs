@@ -1,10 +1,10 @@
 use crate::states::level_state::LevelState;
-use crate::states::main_menu_state::{add_animated_backgrounds, add_ship};
+use crate::states::main_menu_state::{add_ship};
 use crate::states::CurrentState;
 use crate::utils::level_reader::{read_level, LevelConfig};
 use crate::utils::save::save_progress;
 use crate::utils::sprites::{
-    load_background, load_background_2, load_background_3, load_ship_thrusters_spritesheet,
+    load_ship_thrusters_spritesheet,
     SCREEN_HEIGHT, SCREEN_WIDTH,
 };
 use amethyst::assets::Loader;
@@ -112,7 +112,7 @@ fn initialise_texts(world: &mut World, lvl_number: usize, config: LevelConfig) {
         .create_entity()
         .with(level_text_transform)
         .with(UiText::new(
-            font.clone(),
+            font,
             config.text,
             [1., 1., 1., 1.],
             50.,

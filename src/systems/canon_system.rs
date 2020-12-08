@@ -70,7 +70,7 @@ impl<'s> System<'s> for CanonSystem {
                                 .build_entity()
                                 .with(
                                     Bullet {
-                                        direction: canon.direction.clone(),
+                                        direction: canon.direction,
                                         kind: canon.kind.clone(),
                                         life_duration: canon_kind_to_bullet_life_duration(
                                             &canon.kind,
@@ -111,7 +111,7 @@ impl<'s> System<'s> for CanonSystem {
                             .build_entity()
                             .with(
                                 Bullet {
-                                    direction: canon.direction.clone(),
+                                    direction: canon.direction,
                                     kind: canon.kind.clone(),
                                     life_duration: canon_kind_to_bullet_life_duration(&canon.kind),
                                 },

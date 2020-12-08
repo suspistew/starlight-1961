@@ -5,7 +5,7 @@ use crate::resources::main_resource::MainResource;
 use crate::utils::sprites::sprite_to_entities::init_blade_saw_collider;
 use crate::utils::sprites::TILE_SIZE;
 use amethyst::core::ecs::{Join, Read, ReadStorage, System, Write, WriteStorage};
-use amethyst::core::num::FloatConst;
+
 use amethyst::core::{Time, Transform};
 
 pub struct BladeSawSystem;

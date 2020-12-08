@@ -175,19 +175,19 @@ pub fn are_colliding(
 
 pub fn compute_is_eligible_for_collision(col1: &Colliders, col2: &Colliders) -> bool {
     !(col1.min_x < col2.min_x
-        && col1.max_x < col2.min_x
+        && col1.max_x < col2.max_x
         && col1.min_x < col2.max_x
         && col1.max_x < col2.max_x)
         && !(col1.min_x > col2.min_x
-            && col1.max_x > col2.min_x
+            && col1.max_x > col2.max_x
             && col1.min_x > col2.max_x
             && col1.max_x > col2.max_x)
         && !(col1.min_y < col2.min_y
-            && col1.max_y < col2.min_y
+            && col1.max_y < col2.max_y
             && col1.min_y < col2.max_y
             && col1.max_y < col2.max_y)
         && !(col1.min_y > col2.min_y
-            && col1.max_y > col2.min_y
+            && col1.max_y > col2.max_y
             && col1.min_y > col2.max_y
             && col1.max_y > col2.max_y)
 }
