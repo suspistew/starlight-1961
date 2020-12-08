@@ -1,9 +1,9 @@
+use amethyst::assets::{AssetStorage, Handle, Loader};
 use amethyst::core::ecs::{World, WorldExt};
-use amethyst::assets::{Handle, Loader, AssetStorage};
-use amethyst::renderer::{SpriteSheet, Texture, ImageFormat, SpriteSheetFormat};
+use amethyst::renderer::{ImageFormat, SpriteSheet, SpriteSheetFormat, Texture};
 
-pub mod sprite_to_entities;
 pub mod plasma_doors;
+pub mod sprite_to_entities;
 
 pub const SCREEN_HEIGHT: f32 = 576.0;
 pub const SCREEN_WIDTH: f32 = 704.0;
@@ -40,20 +40,11 @@ const IMAGE_BACKGROUND2: &str = "sprites/background2.png";
 const IMAGE_BACKGROUND3: &str = "sprites/background3.png";
 const CONFIG_BACKGROUND: &str = "sprites/background.ron";
 
-
 pub fn load_level_spritesheet(world: &mut World, lvl_number: usize) -> Handle<SpriteSheet> {
-    let image = format!(
-        "levels/level_{}.png",
-        lvl_number
-    );
-    let config = format!(
-        "levels/level_{}.ron",
-        lvl_number
-    );
+    let image = format!("levels/level_{}.png", lvl_number);
+    let config = format!("levels/level_{}.ron", lvl_number);
     load_texture(world, image.as_str(), config.as_str())
 }
-
-
 
 fn load_texture(world: &mut World, image: &str, config: &str) -> Handle<SpriteSheet> {
     let texture_handle = {

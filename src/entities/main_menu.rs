@@ -1,7 +1,7 @@
 use amethyst::core::ecs::{Component, DenseVecStorage};
 
-pub struct MenuBackground{
-    pub parallax_index: usize
+pub struct MenuBackground {
+    pub parallax_index: usize,
 }
 
 impl Component for MenuBackground {

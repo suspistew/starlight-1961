@@ -1,29 +1,29 @@
-use amethyst::core::ecs::{System, WriteStorage, Write, ReadStorage, Read, Join, ReadExpect};
 use crate::entities::bonus::{Bonus, BonusKind};
-use amethyst::core::{Transform, Time};
-use crate::resources::main_resource::MainResource;
-use crate::entities::ship::ShipParent;
-use crate::utils::sprites::sprite_to_entities::init_bonus_collider;
 use crate::entities::collision::are_colliding;
-use amethyst::renderer::SpriteRender;
+use crate::entities::ship::ShipParent;
+use crate::resources::main_resource::MainResource;
+use crate::utils::sound::{play_bonus, Sounds};
 use crate::utils::sprites::plasma_doors::EMPTY;
+use crate::utils::sprites::sprite_to_entities::init_bonus_collider;
 use amethyst::assets::AssetStorage;
-use crate::utils::sound::{Sounds, play_bonus};
 use amethyst::audio::output::Output;
 use amethyst::audio::Source;
+use amethyst::core::ecs::{Join, Read, ReadExpect, ReadStorage, System, Write, WriteStorage};
+use amethyst::core::{Time, Transform};
+use amethyst::renderer::SpriteRender;
 
-const DEFAULT_CHANGE_DIRECTION_TIMER :f32 = 0.6;
+const DEFAULT_CHANGE_DIRECTION_TIMER: f32 = 0.6;
 
-pub struct BonusSystem{
+pub struct BonusSystem {
     direction_y: f32,
-    change_direction_timer: f32
+    change_direction_timer: f32,
 }
 
-impl Default for BonusSystem{
+impl Default for BonusSystem {
     fn default() -> Self {
-        BonusSystem{
+        BonusSystem {
             direction_y: 15.,
-            change_direction_timer: DEFAULT_CHANGE_DIRECTION_TIMER
+            change_direction_timer: DEFAULT_CHANGE_DIRECTION_TIMER,
         }
     }
 }
@@ -41,7 +41,20 @@ impl<'s> System<'s> for BonusSystem {
         Option<Read<'s, Output>>,
     );
 
-    fn run(&mut self, (mut bonuses, mut transforms, mut main_resource, ships, mut sprites, time, storage, sounds, audio_output): Self::SystemData) {
+    fn run(
+        &mut self,
+        (
+            mut bonuses,
+            mut transforms,
+            mut main_resource,
+            ships,
+            mut sprites,
+            time,
+            storage,
+            sounds,
+            audio_output,
+        ): Self::SystemData,
+    ) {
         self.change_direction_timer -= time.delta_seconds();
         if self.change_direction_timer <= 0. {
             self.change_direction_timer = DEFAULT_CHANGE_DIRECTION_TIMER;
@@ -49,30 +62,31 @@ impl<'s> System<'s> for BonusSystem {
         }
         let mut ship_polygon = Vec::new();
         for (_ship, transform) in (&ships, &transforms).join() {
-            ship_polygon = main_resource.get_colliders_for_collision(transform.translation().x, transform.translation().y);
+            ship_polygon = main_resource
+                .get_colliders_for_collision(transform.translation().x, transform.translation().y);
         }
-        for (bonus, transform, sprite) in (&mut bonuses, &mut transforms, &mut sprites ).join(){
+        for (bonus, transform, sprite) in (&mut bonuses, &mut transforms, &mut sprites).join() {
             transform.append_translation_xyz(0., self.direction_y * time.delta_seconds(), 0.);
             let (x, y) = (transform.translation().x, transform.translation().y);
             let collider = init_bonus_collider(&bonus.kind, x, y);
-            if main_resource.should_reset_bonuses{
+            if main_resource.should_reset_bonuses {
                 sprite.sprite_number = bonus.initial_sprite;
                 bonus.taken = false;
-            }else if !bonus.taken &&  are_colliding( &ship_polygon, collider.polygons()){
+            } else if !bonus.taken && are_colliding(&ship_polygon, collider.polygons()) {
                 match bonus.kind {
                     BonusKind::Fuel => {
                         main_resource.bonus_fuel();
-                    },
+                    }
                     BonusKind::Wrench => {
                         main_resource.bonus_heal();
-                    },
+                    }
                     BonusKind::Coin => {
                         main_resource.bonus_coin();
                     }
                 }
                 play_bonus(&*sounds, &storage, audio_output.as_deref());
                 bonus.taken = true;
-                sprite.sprite_number= EMPTY;
+                sprite.sprite_number = EMPTY;
             }
         }
         main_resource.should_reset_bonuses = false;

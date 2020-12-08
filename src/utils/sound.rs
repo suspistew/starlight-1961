@@ -1,12 +1,10 @@
-use amethyst::audio::{SourceHandle, OggFormat, AudioSink, Source};
-use std::{iter::Cycle, vec::IntoIter};
-use amethyst::assets::{Loader, AssetStorage};
+use amethyst::assets::{AssetStorage, Loader};
+use amethyst::audio::output::{init_output, Output};
+use amethyst::audio::{AudioSink, OggFormat, Source, SourceHandle};
 use amethyst::core::ecs::{World, WorldExt};
-use amethyst::audio::output::{Output, init_output};
+use std::{iter::Cycle, vec::IntoIter};
 
-const MENU_MUSIC: &'static [&'static str] = &[
-    "audio/menu_music.ogg"
-];
+const MENU_MUSIC: &'static [&'static str] = &["audio/menu_music.ogg"];
 
 const EXPLOSION: &str = "audio/explosion.ogg";
 const FIRE: &str = "audio/fire.ogg";
@@ -49,7 +47,8 @@ pub fn initialise_audio(world: &mut World) {
             land: load_audio_track(&loader, &world, LAND),
             bonus: load_audio_track(&loader, &world, BONUS),
             air: load_audio_track(&loader, &world, AIR),
-            menu_music };
+            menu_music,
+        };
 
         sounds
     };

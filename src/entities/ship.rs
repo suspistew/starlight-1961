@@ -31,7 +31,7 @@ impl Component for ShipPowerRightNumber {
 }
 
 pub struct ShipLife {
-    pub life_point: u8
+    pub life_point: u8,
 }
 
 impl Component for ShipLife {
@@ -39,7 +39,7 @@ impl Component for ShipLife {
 }
 
 pub struct ShipFuel {
-    pub fuel_point: u8
+    pub fuel_point: u8,
 }
 
 impl Component for ShipFuel {
@@ -47,7 +47,7 @@ impl Component for ShipFuel {
 }
 
 pub struct Coin {
-    pub coin_id: usize
+    pub coin_id: usize,
 }
 
 impl Component for Coin {

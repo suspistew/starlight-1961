@@ -1,11 +1,11 @@
-use amethyst::{SimpleState, StateData, GameData};
-use amethyst::core::ecs::{WorldExt, World, Builder};
 use crate::states::CurrentState;
-use amethyst::ui::{UiText, LineMode, Anchor, UiTransform, TtfFormat};
+use crate::utils::sprites::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use amethyst::assets::Loader;
+use amethyst::core::ecs::{Builder, World, WorldExt};
 use amethyst::core::Transform;
 use amethyst::renderer::Camera;
-use crate::utils::sprites::{SCREEN_WIDTH, SCREEN_HEIGHT};
+use amethyst::ui::{Anchor, LineMode, TtfFormat, UiText, UiTransform};
+use amethyst::{GameData, SimpleState, StateData};
 
 pub struct EndLevelState;
 

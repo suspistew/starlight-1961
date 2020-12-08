@@ -1,9 +1,9 @@
-use amethyst::core::ecs::{System, Read, ReadStorage, WriteStorage, Join};
-use crate::resources::main_resource::MainResource;
 use crate::entities::ship::Thrusters;
+use crate::resources::main_resource::MainResource;
+use amethyst::core::ecs::{Join, Read, ReadStorage, System, WriteStorage};
 use amethyst::renderer::SpriteRender;
 
-pub struct ThrustersSystem ;
+pub struct ThrustersSystem;
 
 impl<'s> System<'s> for ThrustersSystem {
     type SystemData = (
@@ -16,15 +16,15 @@ impl<'s> System<'s> for ThrustersSystem {
         for (_, sprite_render) in (&thrusters, &mut sprite_renders).join() {
             if main_resource.is_exploding {
                 sprite_render.sprite_number = 5;
-            }else {
+            } else {
                 sprite_render.sprite_number = {
                     if main_resource.bullet_hit_timer > 0. {
                         if main_resource.power == 0 {
                             5
-                        }else{
+                        } else {
                             6
                         }
-                    }else {
+                    } else {
                         5 + main_resource.sprite_nb()
                     }
                 };
